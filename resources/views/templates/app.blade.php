@@ -73,7 +73,7 @@
                     <div class="row header">
                         <div class="col-md-6">
                             <div class="logo">
-                                <img src="../resources/img/logo.png"/>
+                                <img src="../resources/img/logo.png"/>teste
                             </div>
                         </div>
                     </div>
