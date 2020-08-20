@@ -17,13 +17,39 @@
         <style>
             html, body
             {
-                background-color: #383838;
+                background-color: #FF6600;
                 color: #FFF;
                 font-family: 'Century Gothic', sans-serif;
                 font-weight: 200;
-                font-size: 1em;
                 height: 100vh;
                 margin: 0;
+                padding: 0;
+            }
+
+            header, footer
+            {
+                width: 100%;
+                min-height: 90px;
+                position: fixed;
+            }
+
+            .header, .footer
+            {
+                background-color: #383838;
+                position: relative;
+                z-index: 9999;
+            }
+
+            .header
+            {
+                top: 0;
+                box-shadow: 0px 2px 10px 0px black;
+            }
+
+            .footer
+            {
+                bottom: 0;
+                box-shadow: 0px -2px 10px 0px black;
             }
 
             img
@@ -48,60 +74,29 @@
             {
                 position: relative;
             }
+
+            .main
+            {
+                min-height: 100hv;                
+            }
         </style>
     </head>
     <body>
-        <div class="position-ref full-height">
-            <div class="content container-fluid">
-                <header>
-                    @section('header')
-                    @show
+        <div class="container-fluid full-height position-ref">
+            <header>
+                @section('header')
+                @show
+            </header>
 
-                    <style>
-                        .header
-                        {
-                            height: 100%;
-                            max-height: 90px;
-                        }
-
-                        .logo 
-                        {
-                            width: 90px;
-                        }
-                    </style>
-
-                    <div class="row header">
-                        <div class="col-md-6">
-                            <div class="logo">
-                                <img src="dist/img/logo.png"/>teste
-                            </div>
-                        </div>
-                    </div>
-                </header>
-
-                <section>
-                    @section('main')
-                    @show
-                </section>
-                
-                <footer>
-                    @section('header')
-                    @show
-
-                    <style>
-                        .footer
-                        {
-                            height: 90px;
-                        }
-                    </style>
-
-                    <div class="row footer">
-                        <div class="col-md-6">
-                            &nbsp;
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <section class="main">
+                @section('main')
+                @show
+            </section>
+            
+            <footer>
+                @section('footer')
+                @show
+            </footer>
         </div>
     </body>
 </html>

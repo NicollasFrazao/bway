@@ -10,27 +10,36 @@
             font-size: 1.5em;
             text-align: center;
         }
-        
+
+        .content
+        {
+            position: absolute;
+            width: 100%;
+            background-color: #383838 !important;
+        }        
     </style>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="logo">
-                        <img src="../resources/img/logo.png"/>
+    <div class="content flex-center full-height">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="logo">
+                            <img src="dist/img/logo.png"/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="logo-titulo">
-                        <span>b-Way</span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="logo-titulo">
+                            <span>b-Way</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         var login = false;
 
