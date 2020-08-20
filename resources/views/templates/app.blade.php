@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         
-        <link rel="shortcut icon" href="../resources/img/logo.png"/>
+        <link rel="shortcut icon" href="dist/img/logo.png"/>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -73,7 +73,7 @@
                     <div class="row header">
                         <div class="col-md-6">
                             <div class="logo">
-                                <img src="../resources/img/logo.png"/>teste
+                                <img src="dist/img/logo.png"/>teste
                             </div>
                         </div>
                     </div>
