@@ -21,7 +21,8 @@ Route::resource
     [
         'names' =>
         [
-            'index' => 'login.index'
+            'index' => 'login.index',
+            'store' => 'login.efetuar'
         ]
     ]
 );
@@ -47,3 +48,12 @@ Route::get
         //return redirect() -> route('login');
     }
 ) -> name('index');
+
+Route::get
+(
+    '/home', 
+    function () 
+    {
+        return view('home');
+    }
+) -> name('home');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Usuario;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -34,7 +35,25 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $usuarioLogado = Usuario::where('nm_email', $request -> emailUsuario)
+                                -> where ('cd_senha', $request -> senhaUsuario) -> get();
+
+        if ($usuarioLogado -> count() == 1)
+        {
+            $usuarioLogado = $usuarioLogado[0];
+            
+            return 
+            [
+                'ic_sucesso' => true,
+                'ds_usuario' => $usuarioLogado
+            ];
+        }
+
+        return
+        [
+            'ic_sucesso' => false,
+            'ds_mensagem' => 'Não foi possível realizar o login! E-mail e/ou senha estão inválidos.'
+        ];
     }
 
     /**

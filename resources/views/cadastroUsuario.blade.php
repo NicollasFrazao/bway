@@ -75,7 +75,7 @@
                 alert('Por favor preencher o campo "E-mail" corretamente!');
                 txt_emailUsuario.focus();
             }
-            else if (txt_senhaUsuario.value.trim() != txt_confirmarSenhaUsuario.value.trim())
+            else if (txt_senhaUsuario.value.trim() == '' || txt_senhaUsuario.value.trim() != txt_confirmarSenhaUsuario.value.trim())
             {
                 alert('Por favor preencher o campo "Senha" corretamente! As senhas não coincidem.');
                 txt_senhaUsuario.focus();
@@ -95,8 +95,6 @@
                         },
                         success: function(response)
                         {
-                            r = response;
-
                             if ("ds_mensagem" in response)
                             {
                                 while (response.ds_mensagem.indexOf('\\n') != -1)
