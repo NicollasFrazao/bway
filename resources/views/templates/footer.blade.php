@@ -1,4 +1,9 @@
 <style>
+    footer
+    {
+        display: block !important;
+    }
+
     .logo 
     {
         width: 90px;
@@ -9,9 +14,9 @@
 </style>
 
 <div class="row footer">
-    <div class="col-md-6">
+    <div class="col-sm-12">
         <div class="logo">
-            <img src="dist/img/logo.png"/>
+            <img src="{{ asset('dist/img/logo.png') }}"/>
         </div>
     </div>
 </div>

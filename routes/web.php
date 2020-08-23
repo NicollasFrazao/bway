@@ -14,6 +14,29 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('produtos', 'ProdutoController');
+Route::resource
+(
+    'login', 
+    'LoginController',
+    [
+        'names' =>
+        [
+            'index' => 'login.index'
+        ]
+    ]
+);
+
+Route::resource
+(
+    'usuarios', 
+    'UsuarioController',
+    [
+        'names' => 
+        [
+            'store' => 'usuarios.cadastrar'
+        ]
+    ]
+);
 
 Route::get
 (
@@ -23,13 +46,4 @@ Route::get
         return view('index');
         //return redirect() -> route('login');
     }
-);
-
-Route::get
-(
-    '/login', 
-    function () 
-    {
-        return view('login');
-    }
-) -> name('login');
+) -> name('index');

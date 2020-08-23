@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         
-        <link rel="shortcut icon" href="dist/img/logo.png"/>
+        <link rel="shortcut icon" href="{{ asset('dist/img/logo.jpg')}}"/>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -14,6 +14,8 @@
         <title>b-Way - @yield('title')</title>
 
         <!-- Styles -->
+        <link href="{{ asset('dist/css/bootstrap.css') }}" rel="stylesheet">
+
         <style>
             html, body
             {
@@ -31,6 +33,18 @@
                 width: 100%;
                 min-height: 90px;
                 position: fixed;
+                display: none;
+                z-index: 1;
+            }
+
+            header
+            {
+                top: 0;
+            }
+
+            footer
+            {
+                bottom: 0;
             }
 
             .header, .footer
@@ -42,14 +56,18 @@
 
             .header
             {
-                top: 0;
                 box-shadow: 0px 2px 10px 0px black;
             }
 
             .footer
             {
-                bottom: 0;
                 box-shadow: 0px -2px 10px 0px black;
+            }
+
+            a, a:hover, a:visited, a:active
+            {
+                text-decoration: none;
+                color: #FFF;
             }
 
             img
@@ -77,18 +95,87 @@
 
             .main
             {
-                min-height: 100hv;                
+                max-height: 100vh;                
+                height: -webkit-fill-available;
+                z-index: 1;
+                display: flex;
+            }
+
+            div.horizontal-center
+            {
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            
+            div.vertical-center
+            {
+                margin-top: auto !important;
+                margin-bottom: auto !important;
+            }
+
+            .btn.b-Way
+            {
+                color: #FFF;
+                background-color: #383838;
+                height: 50px;
+            }
+
+            input.form-control
+            {
+                height: 40px;
             }
         </style>
+
+        <script src="{{ asset('dist/js/app.js') }}"></script>
+        <script src="{{ asset('dist/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('dist/js/bootstrap.js') }}"></script>
     </head>
     <body>
-        <div class="container-fluid full-height position-ref">
+        <div class="full-height position-ref">
             <header>
                 @section('header')
                 @show
             </header>
 
-            <section class="main">
+            <section class="main container-fluid">
+                <style>
+                    .content
+                    {
+                        width: 100%;
+                        
+                        padding-top: 35px;
+                        padding-left: 20px;
+                        padding-right: 20px;
+
+                        overflow: auto;
+                    }
+                </style>
+
+                <script>
+                    window.onload = function()
+                    {
+                        var header = document.getElementsByClassName('header');
+                        var footer = document.getElementsByClassName('footer');
+
+                        if (header.length == 1)
+                        {
+                            var main = document.getElementsByClassName('main')[0];
+
+                            main.style.paddingTop = document.getElementsByTagName('header')[0].clientHeight + 'px';
+                        }
+
+                        if (footer.length == 1)
+                        {
+                            var main = document.getElementsByClassName('main')[0];
+
+                            main.style.paddingBottom = document.getElementsByTagName('footer')[0].clientHeight + 'px';
+                        }
+
+                        @section('onload')
+                        @show
+                    }
+                </script>
+
                 @section('main')
                 @show
             </section>

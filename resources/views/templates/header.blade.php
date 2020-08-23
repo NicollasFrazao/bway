@@ -1,27 +1,32 @@
 <style>
+    header
+    {
+        display: block !important;
+    }
+
     .logo 
     {
         width: 90px;
         height: 90px;
-        margin-left: auto;
-        margin-right: auto;
         cursor: pointer;
     }
     
     .titulo-header
     {
-        margin-left: auto;
-        margin-right: auto;
-
         min-width: 256px;
+        max-width: 80%;
         min-height: 30px;
-        width: 1px;
+        
+        width: fit-content;
+        padding: 5px;
+
+        display: flex;
         z-index: 9998;
 
         background-color: #FFFFFF;
-        color: #383838;
+        color: #383838;        
         
-        display: flex;
+        text-align: center;
         justify-content: center;
         align-items: center;
         
@@ -31,15 +36,17 @@
 </style>
 
 <div class="row header">
-    <div class="col-md-6">
-        <div class="logo">
-            <img src="dist/img/logo.png"/>
-        </div>
+    <div class="col-sm-12">
+        <a href="{{ route('index') }}">
+            <div class="logo horizontal-center">
+                <img src="{{ asset('dist/img/logo.png') }}"/>
+            </div>
+        </a>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
-        <div class="titulo-header">
+    <div class="col-sm-6 horizontal-center">
+        <div class="titulo-header horizontal-center">
             <span>{{$tituloHeader ?? 'b-Way'}}</span>
         </div>
     </div>
