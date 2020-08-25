@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" ng-app="b-Way">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,7 +31,7 @@
             header, footer
             {
                 width: 100%;
-                min-height: 90px;
+                height: auto;
                 position: fixed;
                 display: none;
                 z-index: 1;
@@ -99,6 +99,8 @@
                 height: -webkit-fill-available;
                 z-index: 1;
                 display: flex;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
             }
 
             div.horizontal-center
@@ -124,8 +126,14 @@
             {
                 height: 40px;
             }
+            
+            .row
+            {
+                margin: 0;
+            }
         </style>
-
+        
+        <script src="{{ asset('dist/js/angular.js') }}"></script>
         <script src="{{ asset('dist/js/app.js') }}"></script>
         <script src="{{ asset('dist/js/jquery.min.js') }}"></script>
         <script src="{{ asset('dist/js/bootstrap.js') }}"></script>
@@ -142,16 +150,18 @@
                     .content
                     {
                         width: 100%;
-                        
-                        padding-top: 35px;
+                        overflow: none;
+                        padding-top: 40px;
+                        /*
                         padding-left: 20px;
                         padding-right: 20px;
-
-                        overflow: auto;
+                        */
                     }
                 </style>
 
                 <script>
+                    var app = angular.module("b-Way", []);
+
                     window.onload = function()
                     {
                         var header = document.getElementsByClassName('header');

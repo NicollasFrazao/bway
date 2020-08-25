@@ -47,7 +47,7 @@
 <div class="row">
     <div class="col-sm-6 horizontal-center">
         <div class="titulo-header horizontal-center">
-            <span>{{$tituloHeader ?? 'b-Way'}}</span>
+            <span id="lbl_tituloHeader">{{$tituloHeader ?? 'b-Way'}}</span>
         </div>
     </div>
 </div>

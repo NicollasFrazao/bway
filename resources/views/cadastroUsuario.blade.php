@@ -12,7 +12,7 @@
 @section('main')
     <div class="content horizontal-center">
         <div class="row">
-            <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4 horizontal-center">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 horizontal-center">
                 <div class="row">
                     <div class="col-sm-12">
                         <form id="Frm_CadastroUsuario">
@@ -52,9 +52,12 @@
                             <br/>
                             <div class="row form-group">
                                 <div class="col-6 col-sm-6 horizontal-center">
+                                    <button type="button" id="btn_voltar" class="form-control btn b-Way" onclick="window.location.href = '{{ route("login.index") }}'">VOLTAR</button>    
+                                </div>
+                                <div class="col-6 col-sm-6 horizontal-center">
                                     <button type="submit" id="btn_cadastrar" class="form-control btn b-Way">CADASTRAR</button>    
                                 </div>
-                            </div>                    
+                            </div>                  
                         </form>
                     </div>
                 </div>
