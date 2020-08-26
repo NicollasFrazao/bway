@@ -75,7 +75,7 @@
                 </div>
             </div>
 
-            <div class="col-3 botao">
+            <div class="col-3 botao" onclick="efetuarLogout()">
                 <div class="row">
                     <div class="col-12">
                         <div class="img">
@@ -92,3 +92,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function efetuarLogout()
+    {
+        $.ajax
+        (
+            {
+                url: "{{ route('logout') }}",
+                method: "get",
+                success: function(response)
+                {
+                    window.location.reload();
+                }
+            }
+        ); 
+    }
+</script>

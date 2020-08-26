@@ -37,7 +37,7 @@
 
 <div class="row header">
     <div class="col-sm-12">
-        <a href="{{ route('index') }}">
+        <a href="{{ route('home') }}">
             <div class="logo horizontal-center">
                 <img src="{{ asset('dist/img/logo.png') }}"/>
             </div>

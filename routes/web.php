@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('produtos', 'ProdutoController');
+Route::resource
+(
+    'produtos', 
+    'ProdutoController',
+    [
+        'names' => 
+        [
+            'index' => 'produtos'
+        ]
+    ]
+);
+
 Route::resource
 (
     'login', 
@@ -22,10 +34,17 @@ Route::resource
         'names' =>
         [
             'index' => 'login.index',
-            'store' => 'login.efetuar'
+            'store' => 'login.efetuar',
+            'destroy' => 'login.logout'
         ]
     ]
 );
+
+Route::get
+(
+    'logout',
+    'LoginController@destroy'
+) -> name('logout');
 
 Route::resource
 (
@@ -51,9 +70,25 @@ Route::get
 
 Route::get
 (
-    '/home', 
-    function () 
+    'home', 
+    function (Request $request) 
     {
-        return view('home');
+        if ($request -> session() -> has('codigoUsuario'))
+        {
+            return view('home');
+        }
+        else
+        {
+            return redirect() -> route('login.index');
+        }
     }
 ) -> name('home');
+
+Route::get
+(
+    'sessao',
+    function(Request $request)
+    {
+        return $request -> session() -> all();
+    }
+);

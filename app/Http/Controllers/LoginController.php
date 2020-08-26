@@ -12,9 +12,16 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $resquest)
     {
-        return view('login');
+        if ($resquest -> session() -> has('codigoUsuario'))
+        {
+            return redirect() -> route('home');
+        }
+        else
+        {
+            return view('login');
+        }
     }
 
     /**
@@ -24,7 +31,7 @@ class LoginController extends Controller
      */
     public function create()
     {
-        return view('login');
+        //return view('login');
     }
 
     /**
@@ -41,6 +48,7 @@ class LoginController extends Controller
         if ($usuarioLogado -> count() == 1)
         {
             $usuarioLogado = $usuarioLogado[0];
+            $request -> session() -> put('codigoUsuario', $usuarioLogado -> cd_usuario);
             
             return 
             [
@@ -64,7 +72,7 @@ class LoginController extends Controller
      */
     public function show($id)
     {
-        //
+        return $id;
     }
 
     /**
@@ -96,8 +104,10 @@ class LoginController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id = '')
     {
-        //
+        session() -> forget('codigoUsuario');
+
+        return redirect() -> route('login.index');
     }
 }

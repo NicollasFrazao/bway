@@ -48,7 +48,7 @@ class ProdutoController extends Controller
      */
     public function show($nome, Request $request)
     {
-        $produtos = Produto::where('nm_produto', 'like', '%'.$nome.'%') -> get();
+        $produtos = Produto::where('nm_produto', 'like', '%'.$nome.'%') -> orderBy('nm_produto', 'asc') -> get();
 
         return $produtos;
     }

@@ -70,58 +70,63 @@
                                     <label for="txt_nomeUsuario">Pesquisar produto: </label>
                                 </div>
                                 <div class="col-sm-12 horizontal-center">
-                                    <input  type="text" id="txt_nomeProduto" name="nomeProduto" class="form-control" placeholder="Digite para adicionar um produto..." required/>    
+                                    <input ng-model="nomeProdutoPesquisar" ng-keyup="pesquisarProduto()" type="text" id="txt_nomeProduto" name="nomeProduto" class="form-control" placeholder="Digite para adicionar um produto..." required/>    
                                 </div>
-                            </div>          
+                            </div>    
                         </form>
 
                         <script>
                             var indicadorPesquisarProduto = false;
 
-                            txt_nomeProduto.onkeyup = function()
-                            {
-                                if (this.value.trim() == '')
-                                {
-                                    if (indicadorPesquisarProduto)
-                                    {
-                                        $('.lista.produtos').fadeOut(100);
-                                        $('.minha.lista.produtos').fadeIn(100);
-                                        
-                                        indicadorPesquisarProduto = false;
-                                    }
-                                }
-                                else
-                                {
-                                    if (!indicadorPesquisarProduto)
-                                    {
-                                        $('.lista.produtos').fadeOut(100);
-                                        $('.pesquisa.lista.produtos').fadeIn(100);
-                                        
-                                        indicadorPesquisarProduto = true;
-                                    }
-                                    /*
-                                    $.ajax
-                                    (
-                                        {
-                                            url: " route
-                                        }
-                                    );
-                                    */
-                                }
-                            }
-                            
-                            
                             app.controller
                             (
                                 "Produtos", 
-                                function($scope) 
+                                function($scope, $http) 
                                 {
-                                    $scope.produtosPesquisar = [1,2,3,4,5,6];
+                                    $scope.produtosPesquisar = [];
+                                    $scope.nomeProdutoPesquisar = '';
 
-                                    $scope.teste = function()
+                                    $scope.pesquisarProduto = function()
                                     {
-                                        alert('oi');
-                                        $scope.produtosPesquisar = [1,2];
+                                        if (!$scope.nomeProdutoPesquisar)
+                                        {
+                                            if (indicadorPesquisarProduto)
+                                            {
+                                                $('.lista.produtos').fadeOut(100);
+                                                $('.minha.lista.produtos').fadeIn(100);
+                                                
+                                                indicadorPesquisarProduto = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            $('.lista.produtos').fadeOut(100);
+
+                                            $http
+                                            (
+                                                {
+                                                    url: "{{ route('produtos') }}" + '/' + $scope.nomeProdutoPesquisar,
+                                                    method: 'GET'
+                                                }
+                                            )
+                                            .then
+                                            (
+                                                function callbackSucesso(response)
+                                                {
+                                                    $scope.produtosPesquisar = response.data;
+
+                                                    $('.pesquisa.lista.produtos').fadeIn(100);
+                                                },
+                                                function callbackErro(response)
+                                                {
+                                                }
+                                            );
+
+                                            if (!indicadorPesquisarProduto)
+                                            {
+                                                indicadorPesquisarProduto = true;
+                                            }
+                                        }
                                     }
                                 }
                             );
@@ -133,7 +138,7 @@
                             </div>
                         </div>
 
-                        <div class="row pesquisa lista produtos" ng-controller="Produtos">
+                        <div class="row pesquisa lista produtos">
                             <div class="col-sm-12 horizontal-center h-100">
                                 <div class="row produto" ng-repeat="produtoPesquisar in produtosPesquisar">
                                     <div class="col-sm-12">
@@ -141,7 +146,7 @@
                                             <div class="col-8 col-sm-8">
                                                 <div class="row h-100" style="align-items: center">
                                                     <div class="col-sm-12">
-                                                        <span>@{{ produtoPesquisar }}</span>
+                                                        <span>@{{ produtoPesquisar.nm_produto }}</span>
                                                     </div>
                                                 </div>
                                             </div>
