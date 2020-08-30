@@ -47,7 +47,7 @@
             padding: 0px;
         }
 
-        .produto .img
+        .produto button
         {
             float: right;
         }
@@ -107,9 +107,11 @@
                                                 </div>
                                             </div>
                                             <div class="col-4 col-sm-4">
-                                                <div class="img" ng-click="excluirProduto(produtoLista.cd_produto)" style="cursor: pointer">
-                                                    <img src="{{ asset('dist/img/excluirProdutoLista.png') }}"/>
-                                                </div>
+                                                <button type="button" class="btn" ng-click="excluirProduto(produtoLista.cd_produto)">
+                                                    <div class="img">
+                                                        <img src="{{ asset('dist/img/excluirProdutoLista.png') }}"/>
+                                                    </div>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -138,9 +140,11 @@
                                                 </div>
                                             </div>
                                             <div class="col-4 col-sm-4">
-                                                <div class="img" ng-click="adicionarProduto(produtoPesquisar.cd_produto)" style="cursor: pointer">
-                                                    <img src="{{ asset('dist/img/adicionarProdutoLista.png') }}"/>
-                                                </div>
+                                                <button type="button" class="btn" ng-click="adicionarProduto(produtoPesquisar.cd_produto)">
+                                                    <div class="img">
+                                                        <img src="{{ asset('dist/img/adicionarProdutoLista.png') }}"/>
+                                                    </div>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -185,8 +189,6 @@
 
                                 $scope.limparListaCompras = function()
                                 {
-                                    btn_limparListaCompras.disabled = true;
-
                                     $http
                                     (
                                         {
@@ -202,8 +204,6 @@
                                             {
                                                 console.log('Lista de compras limpa com sucesso!');
                                                 $scope.getListaCompras();
-
-                                                btn_limparListaCompras.disabled = false;
                                             }
                                         },
                                         function callbackErro(response)
