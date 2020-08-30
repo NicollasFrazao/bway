@@ -16,12 +16,45 @@ use Illuminate\Http\Request;
 
 Route::resource
 (
+    'usuario.listaCompras', 
+    'ListaComprasController',
+    [
+        'names' => 
+        [
+            'show' => 'usuario.listaCompras',
+            'update' => 'listaCompras.alterar',
+            'destroy' => 'listaCompras.limpar'
+        ]
+    ]
+)
+-> parameters
+(
+    [
+        'listaCompras' => 'usuario'
+    ]
+);
+
+Route::resource
+(
+    'usuario', 
+    'UsuarioController',
+    [
+        'names' => 
+        [
+            'store' => 'usuario.cadastrar'
+        ]
+    ]
+);
+
+Route::resource
+(
     'produtos', 
     'ProdutoController',
     [
         'names' => 
         [
-            'index' => 'produtos'
+            'index' => 'produtos',
+            'show' => 'produtos.pesquisar'
         ]
     ]
 );
@@ -34,29 +67,18 @@ Route::resource
         'names' =>
         [
             'index' => 'login.index',
-            'store' => 'login.efetuar',
-            'destroy' => 'login.logout'
+            'store' => 'login.efetuar'
         ]
     ]
 );
 
-Route::get
+Route::post
 (
     'logout',
     'LoginController@destroy'
 ) -> name('logout');
 
-Route::resource
-(
-    'usuarios', 
-    'UsuarioController',
-    [
-        'names' => 
-        [
-            'store' => 'usuarios.cadastrar'
-        ]
-    ]
-);
+//----------------------------------------
 
 Route::get
 (
@@ -83,12 +105,3 @@ Route::get
         }
     }
 ) -> name('home');
-
-Route::get
-(
-    'sessao',
-    function(Request $request)
-    {
-        return $request -> session() -> all();
-    }
-);

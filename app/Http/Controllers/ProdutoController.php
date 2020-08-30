@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Produto;
+use App\Usuario;
 use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
@@ -46,11 +47,30 @@ class ProdutoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($nome, Request $request)
+    public function show($nomeProdutoPesquisar, Request $request)
     {
-        $produtos = Produto::where('nm_produto', 'like', '%'.$nome.'%') -> orderBy('nm_produto', 'asc') -> get();
+        $produtosPesquisados = Produto::where('nm_produto', 'like', '%'.$nomeProdutoPesquisar.'%')
+                        -> orderBy('nm_produto', 'asc') -> get();
+        
+        if ($request -> has('codigoUsuario'))
+        {
+            $codigoUsuario = $request -> codigoUsuario;            
+            $listaCompras = Usuario::where('cd_usuario', $codigoUsuario) -> first() -> listaCompras() -> get();
+            
+            $produtosPesquisados = $produtosPesquisados -> whereNotIn
+            (
+                'cd_produto', 
+                $listaCompras -> map
+                (
+                    function ($item, $key)
+                    {
+                        return $item -> cd_produto;
+                    }
+                ) -> all()
+            ) -> values() -> toArray();
+        }
 
-        return $produtos;
+        return $produtosPesquisados;
     }
 
     /**

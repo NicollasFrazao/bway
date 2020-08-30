@@ -17,4 +17,9 @@ class Usuario extends Model
       'cd_senha'
     ];
     */
+
+    public function listaCompras()
+    {
+      return $this -> belongstoMany(Produto::class, 'usuario_produto', 'cd_usuario', 'cd_produto');
+    }
 }

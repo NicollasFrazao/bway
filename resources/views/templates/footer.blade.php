@@ -100,7 +100,7 @@
         (
             {
                 url: "{{ route('logout') }}",
-                method: "get",
+                method: "post",
                 success: function(response)
                 {
                     window.location.reload();

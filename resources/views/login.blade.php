@@ -53,7 +53,7 @@
                 <br/>
                 <div class="row">
                     <div class="col-sm-12 horizontal-center" style="text-align: center">
-                        <a href="usuarios/create">
+                        <a href="usuario/create">
                             <span>Ainda não se registrou? </span><br/>
                             <span>Não perca tempo e clique aqui.</span>
                         </a>

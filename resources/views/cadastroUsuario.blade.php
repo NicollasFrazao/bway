@@ -88,7 +88,7 @@
                 $.ajax
                 (
                     {
-                        url: "{{ route('usuarios.cadastrar') }}",
+                        url: "{{ route('usuario.cadastrar') }}",
                         method: "post",
                         data: $(this).serialize(),
                         dataType: "json",

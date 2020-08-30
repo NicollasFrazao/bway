@@ -119,7 +119,7 @@
             {
                 color: #FFF;
                 background-color: #383838;
-                height: 50px;
+                min-height: 50px;
             }
 
             input.form-control
