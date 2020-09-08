@@ -150,8 +150,8 @@
                     .content
                     {
                         width: 100%;
-                        overflow: none;
-                        padding-top: 40px;
+                        overflow: hidden;
+                        padding-top: 20px;
                         /*
                         padding-left: 20px;
                         padding-right: 20px;

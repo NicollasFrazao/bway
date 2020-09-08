@@ -54,7 +54,7 @@
                 <div class="row">
                     <div class="col-sm-12 horizontal-center" style="text-align: center">
                         <a href="usuario/create">
-                            <span>Ainda não se registrou? </span><br/>
+                            <span>Ainda não se cadastrou? </span><br/>
                             <span>Não perca tempo e clique aqui.</span>
                         </a>
                     </div>
