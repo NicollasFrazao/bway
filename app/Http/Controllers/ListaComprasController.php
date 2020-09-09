@@ -80,25 +80,29 @@ class ListaComprasController extends Controller
         $codigoProduto = $request -> codigoProduto;
         $indicadorProduto = $request -> indicadorProduto;
 
+        $ic_sucesso = true;
+        $ds_mensagem = '';
+
         if ($indicadorProduto == 1)
         {
             $usuario -> listaCompras() -> attach($codigoProduto);
+            $ds_mensagem = 'Produto adicionado a sua lista de compras com sucesso!';
         }
         else if ($indicadorProduto == 0)
         {
             $usuario -> listaCompras() -> detach($codigoProduto);
+            $ds_mensagem = 'Produto removido da sua lista de compras com sucesso!';
         }
         else
         {
-            return
-            [
-                'ic_sucesso' => false
-            ];
+            $ic_sucesso = false;
+            $ds_mensagem = 'Ocorreu um erro durante o processo! Erro: Indicador não definido.';
         }
 
         return
         [
-            'ic_sucesso' => true
+            'ic_sucesso' => $ic_sucesso,            
+            'ds_mensagem' => $ds_mensagem
         ];
     }
 
@@ -125,7 +129,8 @@ class ListaComprasController extends Controller
 
         return
         [
-            'ic_sucesso' => true
+            'ic_sucesso' => true,
+            'ds_mensagem' => 'Lista de compras limpa com sucesso!'
         ];
     }
 }

@@ -24,12 +24,8 @@
 
         .produtos
         {
-            height: calc(100% - 75px);
+            height: calc(100% - 95px);
             margin-top: 10px;
-        }
-
-        .produtos > div
-        {
             overflow: auto;
         }
 
@@ -38,7 +34,8 @@
             background-color: #383838;
             min-height: 50px;
             margin-bottom: 15px;
-            padding: 0px 10px 0px 10px; 
+            padding: 0;
+            padding-left: 10px;
             box-shadow: 3px 3px 5px 1px black;
         }
 
@@ -57,7 +54,7 @@
             display: none;
         }
 
-        .lista.produtos
+        .minha.lista, .produtos, .pesquisa.lista
         {
             padding-top: 20px;
         }
@@ -80,38 +77,46 @@
                             </div>
                         </form>
 
-                        <div class="row minha lista produtos" ng-init="getListaCompras()">
-                            <div class="col-sm-12 horizontal-center h-100">
-                                <div style="">
-                                    <div class="row" style="text-align: center">
-                                        <div class="col-12 col-sm-12">
-                                            <button type="button" class="btn b-Way" ng-click="limparListaCompras()" id="btn_limparListaCompras">LIMPAR LISTA DE COMPRAS</button>
-                                        </div>
-                                    </div>
-                                    <br/>
-                                    <div class="row">
-                                        <div class="col-12 col-sm-12" style="padding: 0">
-                                            <span>Itens na sua lista de compras (@{{ produtosLista.length }}): </button>
+                        <div class="row minha lista h-100">
+                            <div class="col-sm-12 horizontal-center h-100" style="padding: 0;">
+                                <div class="row">
+                                    <div class="col-sm-12 h-100"> 
+                                        <div style="">
+                                            <div class="row" style="text-align: center">
+                                                <div class="col-12 col-sm-12">
+                                                    <button type="button" class="btn b-Way" ng-click="limparListaCompras()" id="btn_limparListaCompras">LIMPAR LISTA DE COMPRAS</button>
+                                                </div>
+                                            </div>
+                                            <br/>
+                                            <div class="row">
+                                                <div class="col-12 col-sm-12" style="padding: 0">
+                                                    <span>Itens na sua lista de compras (@{{ produtosLista.length }}): </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <br/>
-                                <div class="row produto" ng-repeat="produtoLista in produtosLista">
-                                    <div class="col-sm-12">
-                                        <div class="row h-100">
-                                            <div class="col-8 col-sm-8">
-                                                <div class="row h-100" style="align-items: center">
-                                                    <div class="col-sm-12">
-                                                        <span>@{{ produtoLista.nm_produto }}</span>
+
+                                <div class="row produtos" ng-init="getListaCompras()" style="">
+                                    <div class="col-sm-12 horizontal-center h-100">
+                                        <div class="row produto" ng-repeat="produtoLista in produtosLista">
+                                            <div class="col-sm-12">
+                                                <div class="row h-100">
+                                                    <div class="col-8 col-sm-8">
+                                                        <div class="row h-100" style="align-items: center">
+                                                            <div class="col-sm-12">
+                                                                <span>@{{ produtoLista.nm_produto }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 col-sm-4">
+                                                        <button type="button" class="btn" ng-click="excluirProduto(produtoLista.cd_produto)">
+                                                            <div class="img">
+                                                                <img src="{{ asset('dist/img/excluirProdutoLista.png') }}"/>
+                                                            </div>
+                                                        </button>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-4 col-sm-4">
-                                                <button type="button" class="btn" ng-click="excluirProduto(produtoLista.cd_produto)">
-                                                    <div class="img">
-                                                        <img src="{{ asset('dist/img/excluirProdutoLista.png') }}"/>
-                                                    </div>
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -119,32 +124,40 @@
                             </div>
                         </div>
 
-                        <div class="row pesquisa lista produtos">
-                            <div class="col-sm-12 horizontal-center h-100">
-                                <div style="">
-                                    <div class="row">
-                                        <div class="col-12 col-sm-12" style="padding: 0">
-                                            <span>Resultados da pesquisa (@{{ produtosPesquisar.length }}): </button>
+                        <div class="row pesquisa lista h-100">
+                            <div class="col-sm-12 horizontal-center h-100" style="padding: 0;">
+                                <div class="row">
+                                    <div class="col-sm-12 horizontal-center h-100">
+                                        <div style="">
+                                            <div class="row">
+                                                <div class="col-12 col-sm-12" style="padding: 0">
+                                                    <span>Resultados da sua pesquisa (@{{ produtosPesquisar.length }}): </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <br/>
-                                <div class="row produto" ng-repeat="produtoPesquisar in produtosPesquisar">
-                                    <div class="col-sm-12">
-                                        <div class="row h-100">
-                                            <div class="col-8 col-sm-8">
-                                                <div class="row h-100" style="align-items: center">
-                                                    <div class="col-sm-12">
-                                                        <span>@{{ produtoPesquisar.nm_produto }}</span>
+
+                                <div class="row produtos">
+                                    <div class="col-sm-12 horizontal-center h-100">
+                                        <div class="row produto" ng-repeat="produtoPesquisar in produtosPesquisar">
+                                            <div class="col-sm-12">
+                                                <div class="row h-100">
+                                                    <div class="col-8 col-sm-8">
+                                                        <div class="row h-100" style="align-items: center">
+                                                            <div class="col-sm-12">
+                                                                <span>@{{ produtoPesquisar.nm_produto }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 col-sm-4">
+                                                        <button type="button" class="btn" ng-click="adicionarProduto(produtoPesquisar.cd_produto)">
+                                                            <div class="img">
+                                                                <img src="{{ asset('dist/img/adicionarProdutoLista.png') }}"/>
+                                                            </div>
+                                                        </button>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-4 col-sm-4">
-                                                <button type="button" class="btn" ng-click="adicionarProduto(produtoPesquisar.cd_produto)">
-                                                    <div class="img">
-                                                        <img src="{{ asset('dist/img/adicionarProdutoLista.png') }}"/>
-                                                    </div>
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -189,27 +202,30 @@
 
                                 $scope.limparListaCompras = function()
                                 {
-                                    $http
-                                    (
-                                        {
-                                            url: "{{ route('listaCompras.limpar', session() -> get('codigoUsuario')) }}",
-                                            method: 'DELETE'
-                                        }
-                                    )
-                                    .then
-                                    (
-                                        function callbackSucesso(response)
-                                        {
-                                            if (response.data.ic_sucesso)
+                                    if (confirm('Tem certeza que deseja limpar sua lista de compras?'))
+                                    {
+                                        $http
+                                        (
                                             {
-                                                console.log('Lista de compras limpa com sucesso!');
-                                                $scope.getListaCompras();
+                                                url: "{{ route('listaCompras.limpar', session() -> get('codigoUsuario')) }}",
+                                                method: 'DELETE'
                                             }
-                                        },
-                                        function callbackErro(response)
-                                        {
-                                        }
-                                    );
+                                        )
+                                        .then
+                                        (
+                                            function callbackSucesso(response)
+                                            {
+                                                if (response.data.ic_sucesso)
+                                                {
+                                                    console.log('Lista de compras limpa com sucesso!');
+                                                    $scope.getListaCompras();
+                                                }
+                                            },
+                                            function callbackErro(response)
+                                            {
+                                            }
+                                        );
+                                    }
                                 }
 
                                 $scope.adicionarProduto = function(codigoProduto = false)
@@ -249,35 +265,36 @@
                                 {
                                     if (codigoProduto)
                                     {
-                                        $http
-                                        (
-                                            {
-                                                url: "{{ route('listaCompras.alterar', session() -> get('codigoUsuario')) }}",
-                                                method: 'PUT',
-                                                data:
+                                        if (confirm('Tem certeza que deseja remover esse produto da sua lista de compras?'))
+                                        {
+                                            $http
+                                            (
                                                 {
-                                                    "codigoProduto": codigoProduto,
-                                                    "indicadorProduto": 0
+                                                    url: "{{ route('listaCompras.alterar', session() -> get('codigoUsuario')) }}",
+                                                    method: 'PUT',
+                                                    data:
+                                                    {
+                                                        "codigoProduto": codigoProduto,
+                                                        "indicadorProduto": 0
+                                                    }
                                                 }
-                                            }
-                                        )
-                                        .then
-                                        (
-                                            function callbackSucesso(response)
-                                            {
-                                                if (response.data.ic_sucesso)
+                                            )
+                                            .then
+                                            (
+                                                function callbackSucesso(response)
                                                 {
-                                                    console.log('Produto excluído a sua lista de compras com sucesso!');
-                                                    $scope.getListaCompras();
+                                                    if (response.data.ic_sucesso)
+                                                    {
+                                                        console.log('Produto excluído a sua lista de compras com sucesso!');
+                                                        $scope.getListaCompras();
+                                                    }
+                                                },
+                                                function callbackErro(response)
+                                                {
                                                 }
-                                            },
-                                            function callbackErro(response)
-                                            {
-                                            }
-                                        );
+                                            );
+                                        }
                                     }
-
-                                    
                                 }
 
                                 $scope.pesquisarProduto = function()
@@ -293,7 +310,7 @@
                                                 if (indicadorPesquisarProduto)
                                                 {
                                                     indicadorPesquisarProduto = false;
-                                                    $('.lista.produtos').fadeOut(100, function () { $('.minha.lista.produtos').fadeIn(100); });                                        
+                                                    $('.lista').fadeOut(100, function () { $('.minha.lista').fadeIn(100); });                                        
                                                 }
 
                                                 $scope.getListaCompras();
@@ -303,7 +320,7 @@
                                                 if (!indicadorPesquisarProduto)
                                                 {
                                                     indicadorPesquisarProduto = true;
-                                                    $('.lista.produtos').fadeOut(100, function () { $('.pesquisa.lista.produtos').fadeIn(100); });
+                                                    $('.lista').fadeOut(100, function () { $('.pesquisa.lista').fadeIn(100); });
                                                 }
 
                                                 var urlRequest = "{{ route('produtos.pesquisar', ':nomeProdutoPesquisar') }}";
@@ -328,7 +345,7 @@
                                                         
                                                         if ($scope.nomeProdutoPesquisar)
                                                         {
-                                                            $('.pesquisa.lista.produtos').fadeIn(100);
+                                                            $('.pesquisa.lista').fadeIn(100);
                                                         }
                                                     },
                                                     function callbackErro(response)
