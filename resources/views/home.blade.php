@@ -38,7 +38,7 @@
             background-color: #383838;
             min-height: 50px;
             margin-bottom: 15px;
-            padding: 10px; 
+            padding: 0px 10px 0px 10px; 
             box-shadow: 3px 3px 5px 1px black;
         }
 
