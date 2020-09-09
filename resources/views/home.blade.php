@@ -217,7 +217,7 @@
                                             {
                                                 if (response.data.ic_sucesso)
                                                 {
-                                                    console.log('Lista de compras limpa com sucesso!');
+                                                    console.log(response.data.ds_mensagem);
                                                     $scope.getListaCompras();
                                                 }
                                             },
@@ -250,7 +250,7 @@
                                             {
                                                 if (response.data.ic_sucesso)
                                                 {
-                                                    console.log('Produto adicionado a sua lista de compras com sucesso!');
+                                                    console.log(response.data.ds_mensagem);
                                                     $scope.pesquisarProduto();
                                                 }
                                             },
@@ -285,7 +285,7 @@
                                                 {
                                                     if (response.data.ic_sucesso)
                                                     {
-                                                        console.log('Produto excluído a sua lista de compras com sucesso!');
+                                                        console.log(response.data.ds_mensagem);
                                                         $scope.getListaCompras();
                                                     }
                                                 },

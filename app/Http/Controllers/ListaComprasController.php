@@ -91,7 +91,7 @@ class ListaComprasController extends Controller
         else if ($indicadorProduto == 0)
         {
             $usuario -> listaCompras() -> detach($codigoProduto);
-            $ds_mensagem = 'Produto removido da sua lista de compras com sucesso!';
+            $ds_mensagem = 'Produto excluído da sua lista de compras com sucesso!';
         }
         else
         {
