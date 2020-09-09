@@ -54,7 +54,7 @@ class UsuarioController extends Controller
             return
             [
                 'ic_sucesso' => true,
-                'ds_mensagem' => 'Usuário criado com sucesso!\n\nObrigado por escolher o b-Way!'
+                'ds_mensagem' => 'Usuário criado com sucesso!\nObrigado por escolher o b-Way!'
                 //'ds_usuario' => $novoUsuario
             ];
         }
@@ -63,7 +63,7 @@ class UsuarioController extends Controller
             return 
             [
                 'ic_sucesso' => false,
-                'ds_mensagem' => 'O e-mail desejado já está sendo utilizado por outro usuário!\n\nInsira e outro e tente novamente.'
+                'ds_mensagem' => 'O e-mail desejado já está sendo utilizado por outro usuário!\nInsira e outro e tente novamente.'
             ];
         }
     }

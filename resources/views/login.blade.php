@@ -23,7 +23,8 @@
                                 <div class="col-sm-12 horizontal-center">
                                     <input type="email" id="txt_emailUsuario" name="emailUsuario" class="form-control" placeholder="usuario@bway.anytech.com.br" required/>    
                                 </div>
-                            </div>   
+                            </div>
+                            <br/> 
                             <div class="row form-group">
                                 <div class="col-sm-12 horizontal-center">
                                     <label>Senha: </label>
