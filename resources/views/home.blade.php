@@ -265,7 +265,7 @@
                                 {
                                     if (codigoProduto)
                                     {
-                                        if (confirm('Tem certeza que deseja remover esse produto da sua lista de compras?'))
+                                        if (confirm('Tem certeza que deseja excluir esse produto da sua lista de compras?'))
                                         {
                                             $http
                                             (
