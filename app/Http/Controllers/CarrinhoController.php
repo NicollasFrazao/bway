@@ -119,13 +119,13 @@ class CarrinhoController extends Controller
 
         $possivelCarrinho -> each
         (
-            function ($setor) use ($carrinho, $codigosProdutoCarrinho)
+            function ($setor) use ($carrinho)
             {
                 $codigoSetor = $setor['cd_setor'];
 
                 $setor['produtos'] -> each
                 (
-                    function ($produto) use ($codigoSetor, $carrinho, $codigosProdutoCarrinho)
+                    function ($produto) use ($codigoSetor, $carrinho)
                     {
                         $codigoProduto = $produto['cd_produto'];
                         
