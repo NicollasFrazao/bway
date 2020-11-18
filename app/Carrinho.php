@@ -22,6 +22,6 @@ class Carrinho extends Model
 
     public function produtos()
     {
-      return $this -> belongstoMany(Produto::class, 'carrinho_produto', 'cd_carrinho', 'cd_produto');
+      return $this -> belongstoMany(Produto::class, 'carrinho_produto', 'cd_carrinho', 'cd_produto') -> withPivot('cd_setor', 'ic_adquirido');
     }
 }

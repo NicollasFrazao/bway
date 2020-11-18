@@ -14,4 +14,9 @@ class Produto extends Model
     {
       return $this -> belongstoMany(Produto::class, 'setor_produto', 'cd_setor', 'cd_produto');
     }
+
+    public function carrinhos()
+    {
+      return $this -> belongstoMany(Carrinho::class, 'carrinho_produto', 'cd_carrinho', 'cd_produto');
+    }
 }
