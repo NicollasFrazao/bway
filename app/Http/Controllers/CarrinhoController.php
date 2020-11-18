@@ -117,8 +117,6 @@ class CarrinhoController extends Controller
             $carrinho -> save();
         }
 
-        $codigosProdutoCarrinho = $carrinho -> produtos() -> get() -> pluck('pivot.cd_produto') -> all();
-        
         $possivelCarrinho -> each
         (
             function ($setor) use ($carrinho, $codigosProdutoCarrinho)
@@ -131,7 +129,7 @@ class CarrinhoController extends Controller
                     {
                         $codigoProduto = $produto['cd_produto'];
                         
-                        if (!in_array($codigoProduto, $codigosProdutoCarrinho))
+                        if (!in_array($codigoProduto, $carrinho -> produtos() -> get() -> pluck('pivot.cd_produto') -> all()))
                         {
                             $carrinho -> produtos() -> attach($codigoProduto, ['cd_setor' => $codigoSetor]);
                         }
