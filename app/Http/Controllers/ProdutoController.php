@@ -49,25 +49,32 @@ class ProdutoController extends Controller
      */
     public function show($nomeProdutoPesquisar, Request $request)
     {
-        $produtosPesquisados = Produto::where('nm_produto', 'like', '%'.$nomeProdutoPesquisar.'%')
-                        -> orderBy('nm_produto', 'asc') -> get();
-        
-        if ($request -> has('codigoUsuario'))
+        if ($nomeProdutoPesquisar != '')
         {
-            $codigoUsuario = $request -> codigoUsuario;            
-            $listaCompras = Usuario::where('cd_usuario', $codigoUsuario) -> first() -> listaCompras() -> get();
-            
-            $produtosPesquisados = $produtosPesquisados -> whereNotIn
-            (
-                'cd_produto', 
-                $listaCompras -> map
+            $produtosPesquisados = Produto::where('nm_produto', 'like', '%'.$nomeProdutoPesquisar.'%')
+                                            -> orderBy('nm_produto', 'asc') -> get();
+        
+            if ($request -> has('codigoUsuario'))
+            {
+                $codigoUsuario = $request -> codigoUsuario;            
+                $listaCompras = Usuario::where('cd_usuario', $codigoUsuario) -> first() -> listaCompras() -> get();
+                
+                $produtosPesquisados = $produtosPesquisados -> whereNotIn
                 (
-                    function ($item, $key)
-                    {
-                        return $item -> cd_produto;
-                    }
-                ) -> all()
-            ) -> values() -> toArray();
+                    'cd_produto', 
+                    $listaCompras -> map
+                    (
+                        function ($item, $key)
+                        {
+                            return $item -> cd_produto;
+                        }
+                    ) -> all()
+                ) -> values() -> toArray();
+            }
+        }
+        else
+        {
+            $produtosPesquisados = [];
         }
 
         return $produtosPesquisados;

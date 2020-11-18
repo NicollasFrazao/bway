@@ -104,7 +104,7 @@ class ProdutoSeeder extends Seeder
                 ['nm_produto' => 'Achocolatados em Pó'],
                 ['nm_produto' => 'Vegetais'],
                 ['nm_produto' => 'Pão de Forma'],
-                ['nm_produto' => 'pão de Cachorro Quente'],
+                ['nm_produto' => 'Pão de Cachorro Quente'],
                 ['nm_produto' => 'Pão de Hambúrguer'],
                 ['nm_produto' => 'Bisnaguinha'],
                 ['nm_produto' => 'Biscoitos'],

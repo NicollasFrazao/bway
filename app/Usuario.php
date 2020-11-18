@@ -20,6 +20,6 @@ class Usuario extends Model
 
     public function listaCompras()
     {
-      return $this -> belongstoMany(Produto::class, 'usuario_produto', 'cd_usuario', 'cd_produto');
+      return $this -> belongstoMany(Produto::class, 'tb_lista_compras', 'cd_usuario', 'cd_produto');
     }
 }

@@ -48,7 +48,7 @@ class LoginController extends Controller
         if ($usuarioLogado -> count() == 1)
         {
             $usuarioLogado = $usuarioLogado[0];
-            $request -> session() -> put('codigoUsuario', $usuarioLogado -> cd_usuario);
+            $request -> session() -> put('usuario', $usuarioLogado);
             
             return 
             [
@@ -106,7 +106,7 @@ class LoginController extends Controller
      */
     public function destroy($id = '')
     {
-        session() -> forget('codigoUsuario');
+        session() -> forget('usuario');
 
         return redirect() -> route('login.index');
     }

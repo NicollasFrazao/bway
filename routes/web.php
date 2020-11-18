@@ -16,6 +16,39 @@ use Illuminate\Http\Request;
 
 Route::resource
 (
+    'usuario.carrinho', 
+    'CarrinhoController',
+    [
+        'names' => 
+        [
+            'show' => 'usuario.carrinho'
+        ]
+    ]
+)
+-> parameters
+(
+    [
+        'usuario' => 'usuario',
+        'carrinho' => 'estabelecimento'
+    ]
+);
+
+Route::resource
+(
+    'estabelecimentos', 
+    'EstabelecimentoController',
+    [
+        'names' => 
+        [
+            'index' => 'estabelecimentos',
+            'create' => 'estabelecimentos.cadastrar',
+            'show' => 'estabelecimentos.exibir'
+        ]
+    ]
+);
+
+Route::resource
+(
     'usuario.listaCompras', 
     'ListaComprasController',
     [
@@ -95,7 +128,7 @@ Route::get
     'home', 
     function (Request $request) 
     {
-        if ($request -> session() -> has('codigoUsuario'))
+        if ($request -> session() -> has('usuario'))
         {
             return view('home');
         }
@@ -105,3 +138,19 @@ Route::get
         }
     }
 ) -> name('home');
+
+Route::get
+(
+    'admin/estabelecimentos', 
+    function (Request $request) 
+    {
+        /*
+        if ($request -> session() -> has('usuario'))
+        {
+            return view('home');
+        }
+        */
+        
+        return view('admin.estabelecimento.index');
+    }
+) -> name('estabelecimentos.admin');

@@ -12,52 +12,7 @@
 
 @section('main')
     <style>
-        .tela
-        {
-            display: none;
-        }
-
-        .tela > div
-        {
-            padding: 0;
-        }
-
-        .produtos
-        {
-            height: calc(100% - 95px);
-            margin-top: 10px;
-            overflow: auto;
-        }
-
-        .produtos .produto
-        {
-            background-color: #383838;
-            min-height: 50px;
-            margin-bottom: 15px;
-            padding: 0;
-            padding-left: 10px;
-            box-shadow: 3px 3px 5px 1px black;
-        }
-
-        .produto div
-        {
-            padding: 0px;
-        }
-
-        .produto button
-        {
-            float: right;
-        }
-
-        .pesquisa.lista.produtos
-        {
-            display: none;
-        }
-
-        .minha.lista, .produtos, .pesquisa.lista
-        {
-            padding-top: 20px;
-        }
+        
     </style>
 
     <div class="content horizontal-center">
@@ -184,7 +139,7 @@
                                     $http
                                     (
                                         {
-                                            url: "{{ route('usuario.listaCompras', session() -> get('codigoUsuario')) }}",
+                                            url: "{{ route('usuario.listaCompras', session() -> get('usuario') -> cd_usuario) }}",
                                             method: 'GET'
                                         }
                                     )
@@ -207,7 +162,7 @@
                                         $http
                                         (
                                             {
-                                                url: "{{ route('listaCompras.limpar', session() -> get('codigoUsuario')) }}",
+                                                url: "{{ route('listaCompras.limpar', session() -> get('usuario') -> cd_usuario) }}",
                                                 method: 'DELETE'
                                             }
                                         )
@@ -226,7 +181,7 @@
                                             }
                                         );
                                     }
-                                }
+                                };
 
                                 $scope.adicionarProduto = function(codigoProduto = false)
                                 {
@@ -235,7 +190,7 @@
                                         $http
                                         (
                                             {
-                                                url: "{{ route('listaCompras.alterar', session() -> get('codigoUsuario')) }}",
+                                                url: "{{ route('listaCompras.alterar', session() -> get('usuario') -> cd_usuario) }}",
                                                 method: 'PUT',
                                                 data:
                                                 {
@@ -259,7 +214,7 @@
                                             }
                                         );
                                     }
-                                }
+                                };
 
                                 $scope.excluirProduto = function(codigoProduto = false)
                                 {
@@ -270,7 +225,7 @@
                                             $http
                                             (
                                                 {
-                                                    url: "{{ route('listaCompras.alterar', session() -> get('codigoUsuario')) }}",
+                                                    url: "{{ route('listaCompras.alterar', session() -> get('usuario') -> cd_usuario) }}",
                                                     method: 'PUT',
                                                     data:
                                                     {
@@ -295,7 +250,7 @@
                                             );
                                         }
                                     }
-                                }
+                                };
 
                                 $scope.pesquisarProduto = function()
                                 {
@@ -326,37 +281,40 @@
                                                 var urlRequest = "{{ route('produtos.pesquisar', ':nomeProdutoPesquisar') }}";
                                                 urlRequest = urlRequest.replace(':nomeProdutoPesquisar', $scope.nomeProdutoPesquisar);
 
-                                                $http
-                                                (
-                                                    {
-                                                        url: urlRequest,
-                                                        method: 'GET',
-                                                        params:
+                                                if ($scope.nomeProdutoPesquisar != '')
+                                                {
+                                                    $http
+                                                    (
                                                         {
-                                                            "codigoUsuario": {{ session() -> get('codigoUsuario') }}
+                                                            url: urlRequest,
+                                                            method: 'GET',
+                                                            params:
+                                                            {
+                                                                "codigoUsuario": {{ session() -> get('usuario') -> cd_usuario }}
+                                                            }
                                                         }
-                                                    }
-                                                )
-                                                .then
-                                                (
-                                                    function callbackSucesso(response)
-                                                    {
-                                                        $scope.produtosPesquisar = response.data;
-                                                        
-                                                        if ($scope.nomeProdutoPesquisar)
+                                                    )
+                                                    .then
+                                                    (
+                                                        function callbackSucesso(response)
                                                         {
-                                                            $('.pesquisa.lista').fadeIn(100);
+                                                            $scope.produtosPesquisar = response.data;
+                                                            
+                                                            if ($scope.nomeProdutoPesquisar)
+                                                            {
+                                                                $('.pesquisa.lista').fadeIn(100);
+                                                            }
+                                                        },
+                                                        function callbackErro(response)
+                                                        {
                                                         }
-                                                    },
-                                                    function callbackErro(response)
-                                                    {
-                                                    }
-                                                );
+                                                    );
+                                                }
                                             }
                                         },
                                         100
                                     );
-                                }
+                                };
                             }
                         );
                     </script>

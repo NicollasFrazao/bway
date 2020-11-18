@@ -131,6 +131,53 @@
             {
                 margin: 0;
             }
+
+            .tela
+            {
+                display: none;
+            }
+
+            .tela > div
+            {
+                padding: 0;
+            }
+
+            .produtos, .estabelecimentos
+            {
+                height: calc(100% - 95px);
+                margin-top: 10px;
+                overflow: auto;
+            }
+
+            .produtos .produto, .estabelecimentos .estabelecimento
+            {
+                background-color: #383838;
+                min-height: 50px;
+                margin-bottom: 15px;
+                padding: 0;
+                padding-left: 10px;
+                box-shadow: 3px 3px 5px 1px black;
+            }
+
+            .produto div, .estabelecimento div
+            {
+                padding: 0px;
+            }
+
+            .produto button, .estabelecimento button
+            {
+                float: right;
+            }
+
+            .pesquisa.lista.produtos
+            {
+                display: none;
+            }
+
+            .minha.lista, .produtos, .pesquisa.lista, .estabelecimentos
+            {
+                padding-top: 20px;
+            }
         </style>
         
         <script src="{{ asset('dist/js/angular.js') }}"></script>
