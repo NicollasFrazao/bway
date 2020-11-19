@@ -14,6 +14,12 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get
+(
+    'estabelecimentos/{estabelecimento}/rotas/{origem}/{destino}', 
+    'RotaController@show'
+) -> name('estabelecimentos.rotas');
+
 Route::resource
 (
     'usuario.carrinho', 

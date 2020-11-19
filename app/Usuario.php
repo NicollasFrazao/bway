@@ -22,4 +22,9 @@ class Usuario extends Model
     {
       return $this -> belongstoMany(Produto::class, 'tb_lista_compras', 'cd_usuario', 'cd_produto');
     }
+
+    public function carrinhos()
+    {
+      return $this -> hasMany(Carrinho::class, 'cd_usuario');
+    }
 }

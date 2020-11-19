@@ -258,7 +258,7 @@ class CarrinhoController extends Controller
         if ($request -> has('codigoProduto'))
         {
             $codigoProduto = $request -> codigoProduto;
-
+            
             $usuario -> listaCompras() -> detach($codigoProduto);
         }
 
