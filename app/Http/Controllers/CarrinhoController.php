@@ -167,13 +167,17 @@ class CarrinhoController extends Controller
 
                 if (!in_array($codigoSetor, $retorno -> pluck('cd_setor') -> all()))
                 {
+                    $setor = Setor::where('cd_setor', $codigoSetor) -> first();
+                    
                     $retorno -> push
                     (
                         collect
                         (
                             [
                                 'cd_setor' => $produto -> pivot -> cd_setor,
-                                'nm_setor' => Setor::where('cd_setor', $codigoSetor) -> first() -> nm_setor,
+                                'nm_setor' => $setor -> nm_setor,
+                                'vl_x' => round($setor -> vl_x + ($setor -> vl_largura/2)),
+                                'vl_y' => round($setor -> vl_y + ($setor -> vl_comprimento/2)),
                                 'produtos' => collect([])
                             ]
                         )
@@ -203,7 +207,32 @@ class CarrinhoController extends Controller
             }
         );
 
-        return $retorno -> sortBy('nm_setor') -> values();
+        $setorOrigem = $estabelecimento -> setores() -> where('ic_entrada', true) -> first();
+        $setorOrigem -> vl_x = round($setorOrigem -> vl_x + ($setorOrigem -> vl_largura/2));
+        $setorOrigem -> vl_y = round($setorOrigem -> vl_y + ($setorOrigem -> vl_comprimento/2));
+
+        $setoresDestino = $retorno;
+
+        $carrinho = collect([]);
+        
+        while (count($setoresDestino) != 0)
+        {
+            for ($cont = 0; $cont <= count($setoresDestino) - 1; $cont = $cont + 1)
+            {
+                $setoresDestino[$cont] -> pull('F');
+                $setoresDestino[$cont] -> put('F', abs($setoresDestino[$cont]['vl_x'] - $setorOrigem['vl_x']) + abs($setoresDestino[$cont]['vl_y'] - $setorOrigem['vl_y']));
+            }
+            
+            $setoresDestino = $setoresDestino -> sortBy('F') -> values();
+            //echo nl2br($setoresDestino."\n\n", true);
+
+            $setorOrigem = $setoresDestino[0];
+            $setoresDestino = $setoresDestino -> slice(1) -> values();
+
+            $carrinho -> push($setorOrigem);
+        }
+        
+        return $carrinho;
     }
 
     /**
@@ -224,9 +253,16 @@ class CarrinhoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Usuario $usuario, Estabelecimento $estabelecimento, Request $request)
     {
-        //
+        if ($request -> has('codigoProduto'))
+        {
+            $codigoProduto = $request -> codigoProduto;
+
+            $usuario -> listaCompras() -> detach($codigoProduto);
+        }
+
+        return $this -> show($usuario, $estabelecimento);
     }
 
     /**

@@ -21,7 +21,8 @@ Route::resource
     [
         'names' => 
         [
-            'show' => 'usuario.carrinho'
+            'show' => 'usuario.carrinho',
+            'update' => 'carrinho.alterar'
         ]
     ]
 )
