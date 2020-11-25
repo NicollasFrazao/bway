@@ -47,12 +47,17 @@ class RotaController extends Controller
      */
     public function show(Estabelecimento $estabelecimento, Setor $origem, Setor $destino)
     {
-        $path = storage_path().'\\app\\public\\estabelecimentos\\rotas\\'.$estabelecimento -> cd_estabelecimento.'-'.$origem -> cd_setor.'-'.$destino -> cd_setor.'.json';
-        //$path = storage_path().'/app/public/estabelecimentos/rotas/'.$estabelecimento -> cd_estabelecimento.'-'.$origem -> cd_setor.'-'.$destino -> cd_setor.'.json';
+        $pathWindows = storage_path().'\\app\\public\\estabelecimentos\\rotas\\'.$estabelecimento -> cd_estabelecimento.'-'.$origem -> cd_setor.'-'.$destino -> cd_setor.'.json';
+        $pathLinux = storage_path().'/app/public/estabelecimentos/rotas/'.$estabelecimento -> cd_estabelecimento.'-'.$origem -> cd_setor.'-'.$destino -> cd_setor.'.json';
         
-        if (file_exists($path))
+        if (file_exists($pathWindows))
         {
-            $rota = json_decode(file_get_contents($path), true); 
+            $rota = json_decode(file_get_contents($pathWindows), true); 
+            return $rota;
+        }
+        else if (file_exists($pathLinux))
+        {
+            $rota = json_decode(file_get_contents($pathLinux), true); 
             return $rota;
         }
         else
