@@ -340,7 +340,8 @@ def inserirListaAberta(_listaAberta, _posicao, _setorOrigem, _setorDestino):
 
     return _listaAberta
 
-def mapearPlanta(_pathPlanta = '', larguraExterna = 0, comprimentoExterno = 0):
+@app.route("/mapearPlanta")
+def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../../../storage/app/public/estabelecimentos/plantas/estabelecimento.jpg'):
     # Definição do Mapeamento
     # 0 - Chão Livre
     # 1 - Parede da Extreminadade
@@ -383,10 +384,10 @@ def mapearPlanta(_pathPlanta = '', larguraExterna = 0, comprimentoExterno = 0):
 
     y = 0
 
-    while (y <= plantaRGB.height - 1):
+    for y in range(plantaRGB.height):
         x = 0
         
-        while (x <= plantaRGB.width - 1):
+        for x in range(plantaRGB.width):
             if (x == 0 and comprimentoPlanta > 0):
                 x = xFinal
 
@@ -566,12 +567,11 @@ def mapearPlanta(_pathPlanta = '', larguraExterna = 0, comprimentoExterno = 0):
 
     planta['mapeamento'] = mapeamentoPlanta
     
-    return planta
-
-#retornoMapeamento = mapearPlanta('../plantas/b-Way - Modelo de Apresentação.jpg', 7, 5)
+    return json.dumps(planta)
 
 if __name__ == "__main__":
     app.run()
+    #retornoMapeamento = mapearPlanta()
 
 #gerarRota(1, 1, [2, 7, 11, 10, 8, 4])
 #gerarRota(1, 1, 2)

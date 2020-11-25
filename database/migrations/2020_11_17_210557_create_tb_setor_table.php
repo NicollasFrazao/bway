@@ -26,7 +26,7 @@ class CreateTbSetorTable extends Migration
                 $table -> integer('vl_largura') -> unsigned();
                 $table -> integer('vl_comprimento') -> unsigned();
 
-                $table -> integer('cd_estabelecimento') -> unsigned();
+                $table -> integer('cd_estabelecimento') -> unsigned() -> nullable();
 
                 $table -> timestamps();
 

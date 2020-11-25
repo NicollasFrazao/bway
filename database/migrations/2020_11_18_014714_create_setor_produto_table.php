@@ -18,8 +18,8 @@ class CreateSetorProdutoTable extends Migration
             'setor_produto', 
             function (Blueprint $table) 
             {
-                $table -> integer('cd_setor') -> unsigned();
-                $table -> integer('cd_produto') -> unsigned();
+                $table -> integer('cd_setor') -> unsigned() -> nullable();
+                $table -> integer('cd_produto') -> unsigned() -> nullable();
 
                 $table -> timestamps();
 

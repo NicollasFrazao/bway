@@ -20,8 +20,8 @@ class CreateTbCarrinhoTable extends Migration
             {
                 //$table -> integer('cd_carrinho') -> unique() -> index();
 
-                $table -> integer('cd_usuario') -> unsigned();
-                $table -> integer('cd_estabelecimento') -> unsigned();
+                $table -> integer('cd_usuario') -> unsigned() -> nullable();
+                $table -> integer('cd_estabelecimento') -> unsigned() -> nullable();
 
                 $table -> timestamps();
 

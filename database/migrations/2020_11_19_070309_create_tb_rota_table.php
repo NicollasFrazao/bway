@@ -18,9 +18,9 @@ class CreateTbRotaTable extends Migration
             'tb_rota', 
             function (Blueprint $table) 
             {
-                $table -> integer('cd_estabelecimento') -> unsigned();
-                $table -> integer('cd_origem') -> unsigned();
-                $table -> integer('cd_destino') -> unsigned();
+                $table -> integer('cd_estabelecimento') -> unsigned() -> nullable();
+                $table -> integer('cd_origem') -> unsigned() -> nullable();
+                $table -> integer('cd_destino') -> unsigned() -> nullable();
 
                 $table -> timestamps();
 

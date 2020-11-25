@@ -20,7 +20,7 @@ class CreateTbLoginTable extends Migration
             {
                 $table -> increments('cd_login') -> index();
                 $table -> string('ds_login') -> index() -> unique();
-                $table -> integer('cd_usuario') -> unsigned();
+                $table -> integer('cd_usuario') -> unsigned() -> nullable();
                 
                 $table -> timestamps();
 

@@ -18,8 +18,8 @@ class CreateTbListaComprasTable extends Migration
             'tb_lista_compras', 
             function (Blueprint $table) 
             {
-                $table -> integer('cd_usuario') -> unsigned();
-                $table -> integer('cd_produto') -> unsigned();
+                $table -> integer('cd_usuario') -> unsigned() -> nullable();
+                $table -> integer('cd_produto') -> unsigned() -> nullable();
 
                 $table -> timestamps();
 
