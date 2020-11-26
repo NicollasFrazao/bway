@@ -366,7 +366,7 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
     if (ponteiroPlanta.width > ponteiroPlanta.height):
         ponteiroPlanta = ponteiroPlanta.rotate(90, Image.NEAREST, expand = 1)
     
-    ponteiroPlanta.show()
+    #ponteiroPlanta.show()
     
     plantaRGB = ponteiroPlanta.convert('RGB')
 
@@ -466,10 +466,10 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
     print('Mapeando divisórias e áreas de interesse da planta...')
     print()
 
-    planta['areasInteresse'] = []
+    planta['setores'] = []
     planta['divisorias'] = []
 
-    areaInteresse = 0
+    setores = 0
     divisoria = 0
 
     y = 0
@@ -481,8 +481,8 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
             if (y == 0 or x == 0 or y == comprimentoPlanta - 1 or y == larguraPlanta - 1):
                 mapeamentoPlanta[y][x] = 1
 
-            if (x == 0 and areaInteresse != 0 and areaInteresse['comprimento'] > 0):
-                x = areaInteresse['x']
+            if (x == 0 and setores != 0 and setores['comprimento'] > 0):
+                x = setores['x']
 
             if (x == 0 and divisoria != 0 and divisoria['comprimento'] > 0):
                 x = divisoria['x']
@@ -494,8 +494,8 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
                 indicadorAreaInterese = True
                 mapeamentoPlanta[y][x] = 2
 
-                if (areaInteresse == 0):
-                    areaInteresse = {
+                if (setores == 0):
+                    setores = {
                         'x': x,
                         'y': y,
                         'largura': 0,
@@ -513,30 +513,30 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
                         'comprimento': 0
                     }
             
-            if (areaInteresse != 0 and areaInteresse['comprimento'] == 0):
+            if (setores != 0 and setores['comprimento'] == 0):
                 if (indicadorAreaInterese):
-                    areaInteresse['largura'] += 1
-                elif (areaInteresse['largura'] > 0):
-                    areaInteresse['comprimento'] = 1
+                    setores['largura'] += 1
+                elif (setores['largura'] > 0):
+                    setores['comprimento'] = 1
                     break
-            elif (areaInteresse != 0 and areaInteresse['largura'] > 0):
+            elif (setores != 0 and setores['largura'] > 0):
                 if (indicadorAreaInterese):
-                    areaInteresse['comprimento'] += 1
+                    setores['comprimento'] += 1
                     break
                 else:
-                    for y in range(areaInteresse['y'], areaInteresse['y'] + areaInteresse['comprimento']):
-                        mapeamentoPlanta[y][areaInteresse['x'] + areaInteresse['largura'] - 1] = 2
+                    for y in range(setores['y'], setores['y'] + setores['comprimento']):
+                        mapeamentoPlanta[y][setores['x'] + setores['largura'] - 1] = 2
                     
-                    for x in range(areaInteresse['x'], areaInteresse['x'] + areaInteresse['largura']):
-                        mapeamentoPlanta[areaInteresse['y'] + areaInteresse['comprimento'] - 1][x] = 2
+                    for x in range(setores['x'], setores['x'] + setores['largura']):
+                        mapeamentoPlanta[setores['y'] + setores['comprimento'] - 1][x] = 2
 
-                    x = areaInteresse['x'] + areaInteresse['largura'] - 1
-                    y = areaInteresse['y']
+                    x = setores['x'] + setores['largura'] - 1
+                    y = setores['y']
 
-                    planta['areasInteresse'].append(areaInteresse)
-                    print("Área de interesse encontrada: " + str(areaInteresse))
+                    planta['setores'].append(setores)
+                    print("Setor encontrado: " + str(setores))
 
-                    areaInteresse = 0
+                    setores = 0
             elif (divisoria != 0 and divisoria['comprimento'] == 0):
                 if (indicadorDivisoria):
                     divisoria['largura'] += 1
