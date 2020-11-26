@@ -19,6 +19,8 @@
         
         width: fit-content;
         padding: 5px;
+        padding-right: 10px;
+        padding-left: 10px;
 
         display: flex;
         z-index: 9998;
@@ -37,11 +39,9 @@
 
 <div class="row header">
     <div class="col-sm-12">
-        <a href="{{ route('home') }}">
-            <div class="logo horizontal-center">
-                <img src="{{ asset('dist/img/logo.png') }}"/>
-            </div>
-        </a>
+        <div class="logo horizontal-center" onclick="history.replaceState(null, 'b-Way - Lista de Compras', '{{ route('home') }}'); window.location.reload();">
+            <img src="{{ asset('dist/img/logo.png') }}"/>
+        </div>
     </div>
 </div>
 <div class="row">

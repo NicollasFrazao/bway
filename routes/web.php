@@ -1,5 +1,6 @@
 <?php
 
+use App\Estabelecimento;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -137,7 +138,7 @@ Route::get
     {
         if ($request -> session() -> has('usuario'))
         {
-            return view('home');
+            return view('listaCompras');
         }
         else
         {
@@ -145,6 +146,54 @@ Route::get
         }
     }
 ) -> name('home');
+
+Route::get
+(
+    'listaCompras', 
+    function (Request $request) 
+    {
+        if ($request -> session() -> has('usuario'))
+        {
+            return view('listaCompras');
+        }
+        else
+        {
+            return redirect() -> route('login.index');
+        }
+    }
+) -> name('listaCompras');
+
+Route::get
+(
+    'carrinho/{estabelecimento}', 
+    function (Estabelecimento $estabelecimento, Request $request) 
+    {
+        if ($request -> session() -> has('usuario'))
+        {
+            return view('carrinho', ['estabelecimento' => $estabelecimento]);
+        }
+        else
+        {
+            return redirect() -> route('login.index');
+        }
+    }
+) -> name('carrinho');
+
+Route::get
+(
+    'estabelecimento/{estabelecimento}', 
+    function (Estabelecimento $estabelecimento, Request $request) 
+    {
+        if ($request -> session() -> has('usuario'))
+        {
+            return view('estabelecimento', ['estabelecimento' => $estabelecimento]);
+        }
+        else
+        {
+            return redirect() -> route('login.index');
+        }
+    }
+) -> name('estabelecimento');
 
 Route::get
 (

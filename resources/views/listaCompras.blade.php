@@ -1,13 +1,13 @@
 @extends('templates.app')
 
-@section('title', 'Home')
+@section('title', 'Lista de Compras')
 
 @section('header')
-    @include('templates.header', ['tituloHeader' => 'b-Way'])
+    @include('templates.header', ['tituloHeader' => 'Lista de Compras'])
 @endsection
 
 @section('onload')
-    showListaCompras();
+    show();
 @endsection
 
 @section('main')
@@ -319,54 +319,14 @@
                         );
                     </script>
                 </div>
-
-                <div class="row tela">
-                    <div class="col-sm-12">
-                        teste
-                    </div>
-                </div>
-
-                <div class="row tela">
-                    <div class="col-sm-12">
-                        teste
-                    </div>
-                </div>
-
-                <div class="row tela">
-                    <div class="col-sm-12">
-                        teste
-                    </div>
-                </div>
-
-                <div class="row tela">
-                    <div class="col-sm-12">
-                        teste
-                    </div>
-                </div>
-
-                <div class="row tela">
-                    <div class="col-sm-12">
-                        teste
-                    </div>
-                </div>
-
-                <div class="row tela">
-                    <div class="col-sm-12">
-                        teste
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
-        function showListaCompras()
+        function show()
         {
-            lbl_tituloHeader.textContent = 'Lista de Compras';
-
-            $('.tela').fadeOut(100, function() { $('.lista-compras').fadeIn(100); });            
-
-            //$('.produtos')[0].style.setProperty('height', $('.produtos')[0].clientHeight - $('#Frm_PesquisarProduto')[0].clientHeight - 10 + 'px ', 'important');
+            $('.tela').fadeOut(100, function() { $('.tela.lista-compras').fadeIn(100); });
         }
     </script>
 @endsection

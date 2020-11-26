@@ -30,7 +30,7 @@
 <div class="row footer h-100">
     <div class="col-12">
         <div class="row">
-            <div class="col-3 botao">
+            <div class="col-3 botao" onclick="var urlCarrinho = '{{ route('carrinho', ':codigoEstabelecimento') }}'; urlCarrinho = urlCarrinho.replace(':codigoEstabelecimento', codigoEstabelecimentoAtual); history.replaceState(null, 'b-Way - Carrinho', urlCarrinho); window.location.reload();">
                 <div class="row">
                     <div class="col-12">
                         <div class="img">
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <div class="col-3 botao">
+            <div class="col-3 botao" onclick="history.replaceState(null, 'b-Way - Mapa', '{{ route('estabelecimento', 1) }}'); window.location.reload();">
                 <div class="row">
                     <div class="col-12">
                         <div class="img">
@@ -60,11 +60,11 @@
                 </div>
             </div>
 
-            <div class="col-3 botao" onclick="showListaCompras()">
+            <div class="col-3 botao" onclick="history.replaceState(null, 'b-Way - Lista de Compras', '{{ route('listaCompras') }}'); window.location.reload();">
                 <div class="row">
                     <div class="col-12">
                         <div class="img">
-                            <img src="{{ asset('dist/img/interesses.png') }}"/>
+                            <img src="{{ asset('dist/img/listaCompras.png') }}"/>
                         </div>
                     </div>
                 </div>

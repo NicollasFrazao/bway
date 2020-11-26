@@ -104,7 +104,7 @@
 
                             if ("ic_sucesso" in response && response.ic_sucesso)
                             {
-                                window.location.href = "{{ route('home') }}";
+                                history.replaceState(null, 'b-Way - Lista de Compras', '{{ route('home') }}'); window.location.reload();
                             }
                         },
                         error: function(error)

@@ -73,7 +73,7 @@
             img
             {
                 width: 100%;
-                height: auto;
+                height: 100%;
             }
 
             .full-height 
@@ -144,9 +144,18 @@
 
             .produtos, .estabelecimentos
             {
-                height: calc(100% - 95px);
                 margin-top: 10px;
                 overflow: auto;
+            }
+
+            .minha.lista .produtos
+            {
+                height: calc(100% - 180px);
+            }
+
+            .pesquisa .produtos
+            {
+                height: calc(100% - 95px);
             }
 
             .produtos .produto, .estabelecimentos .estabelecimento
@@ -208,6 +217,8 @@
 
                 <script>
                     var app = angular.module("b-Way", []);
+                    
+                    var codigoEstabelecimentoAtual = 1;
 
                     window.onload = function()
                     {

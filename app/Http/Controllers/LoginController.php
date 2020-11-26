@@ -12,9 +12,9 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $resquest)
+    public function index(Request $request)
     {
-        if ($resquest -> session() -> has('codigoUsuario'))
+        if ($request -> session() -> has('usuario'))
         {
             return redirect() -> route('home');
         }
