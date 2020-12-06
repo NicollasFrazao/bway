@@ -360,6 +360,8 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
         'comprimentoMetros': comprimentoExterno
     }
 
+    pathMapeamento = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../storage/app/public/estabelecimentos/mapeamentos/mapeamento.json'))
+
     pathAbsolutoPlanta = os.path.abspath(os.path.join(os.path.dirname(__file__), _pathPlanta))
     ponteiroPlanta = Image.open(pathAbsolutoPlanta)
     
@@ -550,9 +552,15 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
                 else:
                     for y in range(divisoria['y'], divisoria['y'] + divisoria['comprimento']):
                         mapeamentoPlanta[y][divisoria['x'] + divisoria['largura'] - 1] = 3
+
+                    for y in range(divisoria['y'], divisoria['y'] + divisoria['comprimento']):
+                        mapeamentoPlanta[y][divisoria['x']] = 3
                     
                     for x in range(divisoria['x'], divisoria['x'] + divisoria['largura']):
                         mapeamentoPlanta[divisoria['y'] + divisoria['comprimento'] - 1][x] = 3
+
+                    for x in range(divisoria['x'], divisoria['x'] + divisoria['largura']):
+                        mapeamentoPlanta[divisoria['y']][x] = 3
 
                     x = divisoria['x'] + divisoria['largura'] - 1
                     y = divisoria['y']
@@ -565,7 +573,10 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
             x += 1
         y += 1
 
-    planta['mapeamento'] = mapeamentoPlanta
+    planta['ds_mapeamento'] = mapeamentoPlanta
+
+    with open(pathMapeamento, "w") as ponteiroMapeamento:
+        json.dump(planta, ponteiroMapeamento)
     
     return json.dumps(planta)
 
