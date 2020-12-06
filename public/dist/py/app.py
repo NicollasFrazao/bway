@@ -124,7 +124,8 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
 
             posicaoAtual = {
                 'vl_x': _setorOrigem['vl_x'],
-                'vl_y': _setorOrigem['vl_y']
+                'vl_y': _setorOrigem['vl_y'],
+                'parent': ''
             }
 
             rota = []
@@ -133,8 +134,6 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
             listaFechada = {}
 
             while (posicaoAtual['vl_x'] != _setorDestino['vl_x'] or posicaoAtual['vl_y'] != _setorDestino['vl_y']):
-                rota.append(posicaoAtual.copy())
-
                 vizinhos = []
 
                 posicao = posicaoAtual.copy()
@@ -163,6 +162,7 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
 
                 posicao = posicaoAtual.copy()
                 posicao['vl_x'] += 1
+                posicao['parent'] = (str(posicaoAtual['vl_x']) + 'x' + str(posicaoAtual['vl_y']))
 
                 index = (str(posicao['vl_x']) + 'x' + str(posicao['vl_y']))
 
@@ -185,11 +185,23 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
-                        listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
-                        vizinhos.append(listaAberta[index].copy())
+                        aux = False
+
+                        for cont in range(posicao['vl_x'], posicao['vl_x'] + 20):
+                            try:
+                                if mapeamentoEstabelecimento[posicao['vl_y']][cont] in (1, 3):
+                                    aux = True
+                                    break
+                            except:
+                                pass
+                        
+                        if not aux:
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
 
                 posicao = posicaoAtual.copy()
                 posicao['vl_x'] -= 1
+                posicao['parent'] = (str(posicaoAtual['vl_x']) + 'x' + str(posicaoAtual['vl_y']))
 
                 index = (str(posicao['vl_x']) + 'x' + str(posicao['vl_y']))
 
@@ -212,11 +224,23 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
-                        listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
-                        vizinhos.append(listaAberta[index].copy())
+                        aux = False
+
+                        for cont in range(posicao['vl_x'] - 20, posicao['vl_x']):
+                            try:
+                                if mapeamentoEstabelecimento[posicao['vl_y']][cont] in (1, 3):
+                                    aux = True
+                                    break
+                            except:
+                                pass
+                        
+                        if not aux:
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
 
                 posicao = posicaoAtual.copy()
                 posicao['vl_y'] += 1
+                posicao['parent'] = (str(posicaoAtual['vl_x']) + 'x' + str(posicaoAtual['vl_y']))
 
                 index = (str(posicao['vl_x']) + 'x' + str(posicao['vl_y']))
 
@@ -239,11 +263,23 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
-                        listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
-                        vizinhos.append(listaAberta[index].copy())
+                        aux = False
+
+                        for cont in range(posicao['vl_y'], posicao['vl_y'] + 20):
+                            try:
+                                if mapeamentoEstabelecimento[cont][posicao['vl_x']] in (1, 3):
+                                    aux = True
+                                    break
+                            except:
+                                pass
+                        
+                        if not aux:
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
 
                 posicao = posicaoAtual.copy()
                 posicao['vl_y'] -= 1
+                posicao['parent'] = (str(posicaoAtual['vl_x']) + 'x' + str(posicaoAtual['vl_y']))
 
                 index = (str(posicao['vl_x']) + 'x' + str(posicao['vl_y']))
 
@@ -266,13 +302,24 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
-                        listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
-                        vizinhos.append(listaAberta[index].copy())
+                        aux = False
+
+                        for cont in range(posicao['vl_y'] - 20, posicao['vl_y']):
+                            try:
+                                if mapeamentoEstabelecimento[cont][posicao['vl_x']] in (1, 3):
+                                    aux = True
+                                    break
+                            except:
+                                pass
+
+                        if not aux:
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
                 
                 posicao = posicaoAtual.copy()
                 index = (str(posicao['vl_x']) + 'x' + str(posicao['vl_y']))
 
-                if (index not in listaFechada):
+                if (index not in listaFechada and index in listaAberta):
                     listaFechada.update(
                         {
                             index: listaAberta[index].copy()
@@ -282,13 +329,22 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                     listaAberta.pop(index)
 
                 vizinhos = sorted(vizinhos, key=lambda x: (x['F'], abs(x['vl_x'] - _setorDestino['vl_x']) + abs(x['vl_y'] - _setorDestino['vl_y'])))
-                listaAberta = dict(sorted(listaAberta.items(), key=lambda x: (x[1]['F'], abs(x[1]['vl_x'] - _setorDestino['vl_x']) + abs(x[1]['vl_y'] - _setorDestino['vl_y']))))
+                aux = sorted(listaAberta.items(), key=lambda x: (x[1]['F'], abs(x[1]['vl_x'] - _setorDestino['vl_x']) + abs(x[1]['vl_y'] - _setorDestino['vl_y'])))
+                listaAberta = dict(aux)
                 
-                if (len(vizinhos) > 0):
-                    posicaoAtual['vl_x'] = vizinhos[0]['vl_x']
-                    posicaoAtual['vl_y'] = vizinhos[0]['vl_y']
+                if (len(listaAberta) > 0):
+                    posicaoAtual['vl_x'] = aux[0][1]['vl_x']
+                    posicaoAtual['vl_y'] = aux[0][1]['vl_y']
+                    posicaoAtual['parent'] = aux[0][1]['parent']
                 else:
                     break
+            
+            if (posicaoAtual['vl_x'] == _setorDestino['vl_x'] and posicaoAtual['vl_y'] == _setorDestino['vl_y']):
+                while (posicaoAtual['parent'] != ''):
+                    rota.append(posicaoAtual)
+                    posicaoAtual = listaFechada[posicaoAtual['parent']].copy()
+                
+                rota.append(posicaoAtual)
 
             with open(pathRota, "w") as ponteiroRota:
                 json.dump(rota, ponteiroRota)
@@ -333,6 +389,7 @@ def inserirListaAberta(_listaAberta, _posicao, _setorOrigem, _setorDestino):
                 index: {
                     'vl_x': _posicao['vl_x'],
                     'vl_y': _posicao['vl_y'],
+                    'parent': _posicao['parent'],
                     'F': G + H
                 }
             }
@@ -581,8 +638,9 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
     return json.dumps(planta)
 
 if __name__ == "__main__":
-    app.run()
+    #app.run()
     #retornoMapeamento = mapearPlanta()
+    gerarRota(1, 11, 10)
 
 #gerarRota(1, 1, [2, 7, 11, 10, 8, 4])
 #gerarRota(1, 1, 2)
