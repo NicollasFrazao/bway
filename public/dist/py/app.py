@@ -640,7 +640,7 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
 if __name__ == "__main__":
     #app.run()
     #retornoMapeamento = mapearPlanta()
-    gerarRota(1, 11, 10)
+    gerarRota(1, 11, 5)
 
 #gerarRota(1, 1, [2, 7, 11, 10, 8, 4])
 #gerarRota(1, 1, 2)
