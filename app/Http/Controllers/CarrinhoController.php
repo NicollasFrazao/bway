@@ -48,8 +48,26 @@ class CarrinhoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Usuario $usuario, Estabelecimento $estabelecimento)
+    public function show(Usuario $usuario, Estabelecimento $estabelecimento, Request $request)
     {
+        if ($request -> has('codigoSetorOrigem'))
+        {
+            $setorOrigem = Setor::where('cd_setor', $request -> codigoSetorOrigem);
+
+            if (count($setorOrigem -> get()) > 0)
+            {
+                $setorOrigem = $setorOrigem -> first();
+            }
+            else
+            {
+                return [];
+            }
+        }
+        else
+        {
+            return [];
+        }
+
         $listaCompras = $usuario -> listaCompras() -> get();
         $codigosProdutoListaCompras = $listaCompras -> pluck('cd_produto') -> all();
 
@@ -207,7 +225,7 @@ class CarrinhoController extends Controller
             }
         );
 
-        $setorOrigem = $estabelecimento -> setores() -> where('ic_entrada', true) -> first();
+        //$setorOrigem = $estabelecimento -> setores() -> where('ic_entrada', true) -> first();
         $setorOrigem -> vl_x = round($setorOrigem -> vl_x + ($setorOrigem -> vl_largura/2));
         $setorOrigem -> vl_y = round($setorOrigem -> vl_y + ($setorOrigem -> vl_comprimento/2));
 
