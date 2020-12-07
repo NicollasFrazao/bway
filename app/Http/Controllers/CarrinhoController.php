@@ -50,9 +50,9 @@ class CarrinhoController extends Controller
      */
     public function show(Usuario $usuario, Estabelecimento $estabelecimento, Request $request)
     {
-        if ($request -> has('codigoSetorOrigem'))
+        if ($request -> has('codigoSetorOrigem') && $request -> codigoSetorOrigem != '')
         {
-            $setorOrigem = Setor::where('cd_setor', $request -> codigoSetorOrigem);
+            $setorOrigem = $estabelecimento -> setores() -> where('cd_setor', $request -> codigoSetorOrigem);
 
             if (count($setorOrigem -> get()) > 0)
             {
@@ -65,7 +65,7 @@ class CarrinhoController extends Controller
         }
         else
         {
-            return [];
+            $setorOrigem = $estabelecimento -> setores() -> where('ic_entrada', true) -> first();
         }
 
         $listaCompras = $usuario -> listaCompras() -> get();
@@ -225,7 +225,6 @@ class CarrinhoController extends Controller
             }
         );
 
-        //$setorOrigem = $estabelecimento -> setores() -> where('ic_entrada', true) -> first();
         $setorOrigem -> vl_x = round($setorOrigem -> vl_x + ($setorOrigem -> vl_largura/2));
         $setorOrigem -> vl_y = round($setorOrigem -> vl_y + ($setorOrigem -> vl_comprimento/2));
 
@@ -279,9 +278,23 @@ class CarrinhoController extends Controller
             $codigoProduto = $request -> codigoProduto;
             
             $usuario -> listaCompras() -> detach($codigoProduto);
+
+            return [
+                'ic_sucesso' => true,
+                'ds_mensagem' => 'Produto adquirido com sucesso!'
+            ];
+        }
+        else
+        {
+            return [
+                'ic_sucesso' => false,
+                'ds_mensagem' => 'Não foi possível adquirir o produto! Erro: Código do produto inválido.'
+            ];
         }
 
-        return $this -> show($usuario, $estabelecimento);
+        //return $this -> show($usuario, $estabelecimento);
+
+        
     }
 
     /**

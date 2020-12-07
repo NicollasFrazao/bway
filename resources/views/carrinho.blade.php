@@ -140,7 +140,17 @@
                                             (
                                                 function callbackSucesso(response)
                                                 {
-                                                    $scope.getCarrinho();
+                                                    var retorno = response.data;
+
+                                                    if ("ic_sucesso" in retorno)
+                                                    {
+                                                        if (retorno.ic_sucesso == true)
+                                                        {
+                                                            $scope.getCarrinho();
+                                                        }
+
+                                                        console.log(retorno.ds_mensagem);
+                                                    }
                                                 },
                                                 function callbackErro(response)
                                                 {
