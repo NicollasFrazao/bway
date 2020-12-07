@@ -134,6 +134,9 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
             listaFechada = {}
 
             while (posicaoAtual['vl_x'] != _setorDestino['vl_x'] or posicaoAtual['vl_y'] != _setorDestino['vl_y']):
+                if (len(rota) == 0):
+                    rota.append(posicaoAtual)
+
                 vizinhos = []
 
                 posicao = posicaoAtual.copy()
@@ -367,8 +370,6 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                 while (posicaoAtual['parent'] != ''):
                     rota.append(posicaoAtual)
                     posicaoAtual = listaFechada[posicaoAtual['parent']].copy()
-                
-                rota.append(posicaoAtual)
 
             with open(pathRota, "w") as ponteiroRota:
                 json.dump(rota, ponteiroRota)
@@ -715,7 +716,7 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
 if __name__ == "__main__":
     app.run()
     #retornoMapeamento = mapearPlanta()
-    #gerarRota(1, 11, 5)
+    #gerarRota(1, 2, 6)
 
 #gerarRota(1, 1, [2, 7, 11, 10, 8, 4])
 #gerarRota(1, 1, 2)
