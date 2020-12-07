@@ -220,7 +220,8 @@ class CarrinhoController extends Controller
             for ($cont = 0; $cont <= count($setoresDestino) - 1; $cont = $cont + 1)
             {
                 $setoresDestino[$cont] -> pull('F');
-                $setoresDestino[$cont] -> put('F', abs($setoresDestino[$cont]['vl_x'] - $setorOrigem['vl_x']) + abs($setoresDestino[$cont]['vl_y'] - $setorOrigem['vl_y']));
+                //$setoresDestino[$cont] -> put('F', abs($setoresDestino[$cont]['vl_x'] - $setorOrigem['vl_x']) + abs($setoresDestino[$cont]['vl_y'] - $setorOrigem['vl_y']));
+                $setoresDestino[$cont] -> put('F', count(RotaController::show($estabelecimento, Setor::find($setorOrigem['cd_setor']), Setor::find($setoresDestino[$cont]['cd_setor']))));
             }
             
             $setoresDestino = $setoresDestino -> sortBy('F') -> values();

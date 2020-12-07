@@ -45,7 +45,7 @@ class RotaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Estabelecimento $estabelecimento, Setor $origem, Setor $destino)
+    public static function show(Estabelecimento $estabelecimento, Setor $origem, Setor $destino)
     {
         $pathWindows = storage_path().'\\app\\public\\estabelecimentos\\rotas\\'.$estabelecimento -> cd_estabelecimento.'-'.$origem -> cd_setor.'-'.$destino -> cd_setor.'.json';
         $pathLinux = storage_path().'/app/public/estabelecimentos/rotas/'.$estabelecimento -> cd_estabelecimento.'-'.$origem -> cd_setor.'-'.$destino -> cd_setor.'.json';
