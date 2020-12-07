@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route("/gerarRota/<_codigoEstabelecimento>/<_codigoSetorOrigem>/<_codigoSetorDestino>")
 def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
-    #os.system('cls')
+    os.system('cls')
 
     rota = []
     
@@ -185,6 +185,11 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
+                        if (mapeamentoEstabelecimento[posicao['vl_y']][posicao['vl_x']] == 4):
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
+                        
+                        """
                         aux = False
 
                         for cont in range(posicao['vl_x'], posicao['vl_x'] + 20):
@@ -198,6 +203,7 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         if not aux:
                             listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
                             vizinhos.append(listaAberta[index].copy())
+                        """
 
                 posicao = posicaoAtual.copy()
                 posicao['vl_x'] -= 1
@@ -224,6 +230,11 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
+                        if (mapeamentoEstabelecimento[posicao['vl_y']][posicao['vl_x']] == 4):
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
+                        
+                        """
                         aux = False
 
                         for cont in range(posicao['vl_x'] - 20, posicao['vl_x']):
@@ -237,6 +248,7 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         if not aux:
                             listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
                             vizinhos.append(listaAberta[index].copy())
+                        """
 
                 posicao = posicaoAtual.copy()
                 posicao['vl_y'] += 1
@@ -263,6 +275,11 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
+                        if (mapeamentoEstabelecimento[posicao['vl_y']][posicao['vl_x']] == 4):
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
+                        
+                        """
                         aux = False
 
                         for cont in range(posicao['vl_y'], posicao['vl_y'] + 20):
@@ -276,6 +293,7 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         if not aux:
                             listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
                             vizinhos.append(listaAberta[index].copy())
+                        """
 
                 posicao = posicaoAtual.copy()
                 posicao['vl_y'] -= 1
@@ -302,6 +320,11 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         and index not in listaFechada
                         and index not in listaAberta
                     ):
+                        if (mapeamentoEstabelecimento[posicao['vl_y']][posicao['vl_x']] == 4):
+                            listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
+                            vizinhos.append(listaAberta[index].copy())
+                        
+                        """
                         aux = False
 
                         for cont in range(posicao['vl_y'] - 20, posicao['vl_y']):
@@ -315,7 +338,8 @@ def gerarRota(_codigoEstabelecimento, _codigoSetorOrigem, _codigoSetorDestino):
                         if not aux:
                             listaAberta = inserirListaAberta(listaAberta, posicao, _setorOrigem, _setorDestino)
                             vizinhos.append(listaAberta[index].copy())
-                
+                        """
+
                 posicao = posicaoAtual.copy()
                 index = (str(posicao['vl_x']) + 'x' + str(posicao['vl_y']))
 
@@ -404,6 +428,7 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
     # 1 - Parede da Extreminadade
     # 2 - Setor
     # 3 - Divisoria
+    # 4 - Rota
 
     os.system('cls')
 
@@ -455,8 +480,8 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
 
             indicadorParede = False
 
-            if (R > 100):
-                if (G < 100 and B < 100):
+            if (R >= 250):
+                if (G <= 10 and B <= 10):
                     indicadorParede = True
 
                     #print('%dx%d => (%d, %d, %d)' % (x, y, R, G, B))
@@ -510,14 +535,20 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
             RGB = plantaRGB.getpixel((xInicial + x, yInicial + y))
             R, G, B = RGB
 
-            if (G != 0 and R/G < 0.85 and B/G < 0.85):
+            if (G >= 250 and R <= 10 and B <= 10):
                 mapeamentoPlanta[y][x] = -3
                 mapeamentoImagem[yInicial + y][xInicial + x] = 3
                     
                 #print('%dx%d => (%d, %d, %d)' % (x, y, R, G, B))
-            elif (B != 0 and G/B < 0.50 and R/B < 0.50):
+            elif (B >= 250 and G <= 10 and R <= 10):
                 mapeamentoPlanta[y][x] = -2
                 mapeamentoImagem[yInicial + y][xInicial + x] = 2
+                
+                #print('%dx%d => (%d, %d, %d)' % (x, y, R, G, B))
+            #elif (R == 255 and G == 102 and B == 0):
+            elif (R >= 250 and G >= 90 and G <= 110 and B <= 10):
+                mapeamentoPlanta[y][x] = -4
+                mapeamentoImagem[yInicial + y][xInicial + x] = 4
                 
                 #print('%dx%d => (%d, %d, %d)' % (x, y, R, G, B))
 
@@ -560,6 +591,7 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
                         'largura': 0,
                         'comprimento': 0
                     }
+
             elif (mapeamentoPlanta[y][x] == -3):
                 indicadorDivisoria = True
                 mapeamentoPlanta[y][x] = 3
@@ -571,7 +603,20 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
                         'largura': 0,
                         'comprimento': 0
                     }
-            
+
+            elif (mapeamentoPlanta[y][x] == -4):
+                mapeamentoPlanta[y][x] = 4
+
+                if (divisoria == 0):
+                     pass
+                else:
+                    indicadorDivisoria = True
+
+                if (setores == 0):
+                     pass
+                else:
+                    indicadorAreaInterese = True
+
             if (setores != 0 and setores['comprimento'] == 0):
                 if (indicadorAreaInterese):
                     setores['largura'] += 1
@@ -584,10 +629,28 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
                     break
                 else:
                     for y in range(setores['y'], setores['y'] + setores['comprimento']):
-                        mapeamentoPlanta[y][setores['x'] + setores['largura'] - 1] = 2
+                        if (mapeamentoPlanta[y][setores['x'] + setores['largura'] - 1] in (-4, 4)):
+                            mapeamentoPlanta[y][setores['x'] + setores['largura'] - 1] = 4
+                        else:
+                            mapeamentoPlanta[y][setores['x'] + setores['largura'] - 1] = 2
+
+                    for y in range(setores['y'], setores['y'] + setores['comprimento']):
+                        if (mapeamentoPlanta[y][setores['x']] in (-4, 4)):
+                            mapeamentoPlanta[y][setores['x']] = 4
+                        else:
+                            mapeamentoPlanta[y][setores['x']] = 2
                     
                     for x in range(setores['x'], setores['x'] + setores['largura']):
-                        mapeamentoPlanta[setores['y'] + setores['comprimento'] - 1][x] = 2
+                        if (mapeamentoPlanta[setores['y'] + setores['comprimento'] - 1][x] in (-4, 4)):
+                            mapeamentoPlanta[setores['y'] + setores['comprimento'] - 1][x] = 4
+                        else:
+                            mapeamentoPlanta[setores['y'] + setores['comprimento'] - 1][x] = 2
+
+                    for x in range(setores['x'], setores['x'] + setores['largura']):
+                        if (mapeamentoPlanta[setores['y']][x] in (-4, 4)):
+                            mapeamentoPlanta[setores['y']][x] = 4
+                        else:
+                            mapeamentoPlanta[setores['y']][x] = 2
 
                     x = setores['x'] + setores['largura'] - 1
                     y = setores['y']
@@ -608,16 +671,28 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
                     break
                 else:
                     for y in range(divisoria['y'], divisoria['y'] + divisoria['comprimento']):
-                        mapeamentoPlanta[y][divisoria['x'] + divisoria['largura'] - 1] = 3
+                        if (mapeamentoPlanta[y][divisoria['x'] + divisoria['largura'] - 1] in (-4, 4)):
+                            mapeamentoPlanta[y][divisoria['x'] + divisoria['largura'] - 1] = 4
+                        else:
+                            mapeamentoPlanta[y][divisoria['x'] + divisoria['largura'] - 1] = 3
 
                     for y in range(divisoria['y'], divisoria['y'] + divisoria['comprimento']):
-                        mapeamentoPlanta[y][divisoria['x']] = 3
+                        if (mapeamentoPlanta[y][divisoria['x']] in (-4, 4)):
+                            mapeamentoPlanta[y][divisoria['x']] = 4
+                        else:
+                            mapeamentoPlanta[y][divisoria['x']] = 3
                     
                     for x in range(divisoria['x'], divisoria['x'] + divisoria['largura']):
-                        mapeamentoPlanta[divisoria['y'] + divisoria['comprimento'] - 1][x] = 3
+                        if (mapeamentoPlanta[divisoria['y'] + divisoria['comprimento'] - 1][x] in (-4, 4)):
+                            mapeamentoPlanta[divisoria['y'] + divisoria['comprimento'] - 1][x] = 4
+                        else:
+                            mapeamentoPlanta[divisoria['y'] + divisoria['comprimento'] - 1][x] = 3
 
                     for x in range(divisoria['x'], divisoria['x'] + divisoria['largura']):
-                        mapeamentoPlanta[divisoria['y']][x] = 3
+                        if (mapeamentoPlanta[divisoria['y']][x] in (-4, 4)):
+                            mapeamentoPlanta[divisoria['y']][x] = 4
+                        else:
+                            mapeamentoPlanta[divisoria['y']][x] = 3
 
                     x = divisoria['x'] + divisoria['largura'] - 1
                     y = divisoria['y']
@@ -638,9 +713,9 @@ def mapearPlanta(larguraExterna = 5, comprimentoExterno = 7, _pathPlanta = '../.
     return json.dumps(planta)
 
 if __name__ == "__main__":
-    #app.run()
+    app.run()
     #retornoMapeamento = mapearPlanta()
-    gerarRota(1, 11, 5)
+    #gerarRota(1, 11, 5)
 
 #gerarRota(1, 1, [2, 7, 11, 10, 8, 4])
 #gerarRota(1, 1, 2)
