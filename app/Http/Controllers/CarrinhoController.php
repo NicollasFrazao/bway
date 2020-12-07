@@ -53,19 +53,19 @@ class CarrinhoController extends Controller
         if ($request -> has('codigoSetorOrigem') && $request -> codigoSetorOrigem != '')
         {
             $setorOrigem = $estabelecimento -> setores() -> where('cd_setor', $request -> codigoSetorOrigem);
-
-            if (count($setorOrigem -> get()) > 0)
-            {
-                $setorOrigem = $setorOrigem -> first();
-            }
-            else
-            {
-                return [];
-            }
         }
         else
         {
-            $setorOrigem = $estabelecimento -> setores() -> where('ic_entrada', true) -> first();
+            $setorOrigem = $estabelecimento -> setores() -> where('ic_entrada', true);
+        }
+
+        if (count($setorOrigem -> get()) > 0)
+        {
+            $setorOrigem = $setorOrigem -> first();
+        }
+        else
+        {
+            return [];
         }
 
         $listaCompras = $usuario -> listaCompras() -> get();
