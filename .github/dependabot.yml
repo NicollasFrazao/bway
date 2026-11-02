@@ -71,3 +71,8 @@ updates:
       interval: weekly
     commit-message:
       prefix: build
+    ignore:
+      # MySQL stays on an LTS line (8.4 today; 9.7 is the current LTS). Majors also bring the
+      # innovation releases, so moving lines is a deliberate change, not a weekly bump.
+      - dependency-name: 'mysql'
+        update-types: ['version-update:semver-major']
