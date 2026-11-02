@@ -12,7 +12,7 @@
         "lint": "eslint . --max-warnings 0",
         "check:unused": "knip",
         "prepare": "husky",
-        "audit": "npm audit --audit-level=high"
+        "audit": "npm audit --omit=dev --audit-level=high"
     },
     "devDependencies": {
         "@commitlint/cli": "21.2.4",
