@@ -57,3 +57,8 @@ and ran the A* search. It is kept exactly as submitted:
 - tag [`v1`](https://github.com/NicollasFrazao/bway/tree/v1) — its README describes what it does,
   how to run it and its known limitations;
 - branch [`legacy/v1`](https://github.com/NicollasFrazao/bway/tree/legacy/v1), the same commit.
+
+## License
+
+The code is under the [MIT License](LICENSE). The paper in [`docs/paper/`](docs/paper/) is the
+team's work and is not covered by it.
