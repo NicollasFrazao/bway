@@ -14,6 +14,9 @@
         "prepare": "husky",
         "audit": "npm audit --omit=dev --audit-level=high"
     },
+    "overrides": {
+        "minimatch": "^11.0.1"
+    },
     "devDependencies": {
         "@commitlint/cli": "21.2.4",
         "@commitlint/config-conventional": "21.2.4",
