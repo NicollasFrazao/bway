@@ -12,8 +12,12 @@
     <file>bootstrap/app.php</file>
     <file>config</file>
     <file>database</file>
+    <file>phpcs/Bway</file>
     <file>routes</file>
     <file>tests</file>
+
+    <!-- The fixtures break the rules on purpose; tests/Unit/CodingStandardTest.php checks them. -->
+    <exclude-pattern>*/phpcs/tests/fixtures/*</exclude-pattern>
 
     <arg name="basepath" value="."/>
     <arg name="extensions" value="php"/>
@@ -81,17 +85,14 @@
     <rule ref="SlevomatCodingStandard.Commenting.UselessInheritDocComment"/>
     <rule ref="SlevomatCodingStandard.Commenting.DeprecatedAnnotationDeclaration"/>
 
-    <!-- Comments say why; no commented-out code; deferred work is an issue, not a TODO. -->
+    <!-- Comments say why: no commented-out code, and deferred work names its issue (TodoWithIssue). -->
     <rule ref="Squiz.PHP.CommentedOutCode">
         <properties>
             <property name="maxPercentage" value="40"/>
         </properties>
         <type>error</type>
     </rule>
-    <rule ref="Generic.Commenting.Todo">
-        <type>error</type>
-    </rule>
-    <rule ref="Generic.Commenting.Fixme"/>
+    <rule ref="./phpcs/Bway"/>
 
     <!-- Readability limits. -->
     <rule ref="Generic.Metrics.NestingLevel">

@@ -27,7 +27,7 @@ It runs, one after the other, exactly the CI jobs:
 | CI job | Command | Catches |
 | --- | --- | --- |
 | `pint` | `composer lint:pint` | formatting (Laravel preset + strict types, strict comparison) |
-| `phpcs` | `composer lint:phpcs` | missing or malformed doc comments, nesting, multi-line conditions, commented-out code, `TODO` |
+| `phpcs` | `composer lint:phpcs` | missing or malformed doc comments, nesting, multi-line conditions, commented-out code, a `TODO` without an issue number |
 | `phpstan` | `composer analyse:phpstan` | Larastan at `max` + strict rules, cognitive complexity, dead code |
 | `phpmd` | `composer analyse:phpmd` | unused code, size and complexity limits, more than 4 parameters |
 | `magic-numbers` | `composer analyse:magic-numbers` | numeric literals in `app/` and `routes/` |
@@ -86,8 +86,9 @@ comment, Slevomat doc comment spacing) and PHPStan.
   `@implements`, `@use`), then `@var` / `@param` / `@return`, then `@throws`, then `@see` /
   `@example`. One blank line after the summary.
 - Comments explain **why**, not what. No commented-out code (`Squiz.PHP.CommentedOutCode`).
-- **No `TODO` or `FIXME`** (`Generic.Commenting.Todo`/`Fixme`, as errors): deferred work is an issue,
-  listed in [tech-debt.md](tech-debt.md) with its number.
+- **`TODO` and `FIXME` name their issue**: `TODO(#12): ...` (the local sniff
+  `Bway.Commenting.TodoWithIssue`, in `phpcs/Bway/`). Deferred work without an issue is invisible to
+  planning; larger gaps go to [tech-debt.md](tech-debt.md) with their number.
 
 ## Readability rules
 

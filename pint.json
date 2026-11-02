@@ -1,6 +1,9 @@
 {
     "$schema": "https://raw.githubusercontent.com/laravel/pint/main/schema.json",
     "preset": "laravel",
+    "exclude": [
+        "phpcs/tests/fixtures"
+    ],
     "rules": {
         "declare_strict_types": true,
         "strict_comparison": true,

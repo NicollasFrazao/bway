@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ruleset name="Bway">
+    <description>Local sniffs for the documentation rules of development-conventions.md.</description>
+</ruleset>

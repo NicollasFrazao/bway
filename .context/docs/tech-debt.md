@@ -11,7 +11,8 @@ scaffoldVersion: "2.0.0"
 # Technical debt
 
 Known gaps, each a decision with a reason. When one is picked up, it becomes an issue and its number
-goes here. A `TODO` in the code is not allowed; this table is where deferred work lives.
+goes here. A `TODO` in the code names its issue (`TODO(#12): ...`); this table holds the gaps that are
+decisions rather than tasks.
 
 | Id | Gap | Why it is open | What closes it |
 | --- | --- | --- | --- |
