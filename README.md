@@ -4,6 +4,8 @@ Shopping-list web app that turns a user's list into a supermarket visit ordered 
 
 Context: Final project (TCC) of the Computer Engineering degree at Universidade Santa Cecília, 2020.
 
+> **v2 rewrite planned.** This is the 2020 code, kept as it was submitted. A rewrite in Laravel 13 with a layered architecture is tracked in [#2](https://github.com/NicollasFrazao/bway/issues/2); this version will stay available as the `v1` tag.
+
 ## Team
 
 Developed by Lucas Henrique dos Santos, Marcus Vinicius Alves Rodrigues dos Santos, Nícollas Frazão and Pedro Marcos Gonçalves de Araujo Diegues Pinto. The code in this repository was written by Nícollas Frazão; the paper (`.docx` at the repository root) is the team's.
