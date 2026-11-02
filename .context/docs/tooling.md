@@ -40,7 +40,7 @@ plugin. Caches go to `storage/framework/cache/` (git-ignored).
 | --- | --- | --- |
 | `lint` | `eslint . --max-warnings 0` | `eslint.config.js` (`@eslint/js` recommended, `eslint-plugin-sonarjs` recommended, complexity 15, depth 3, 4 params) |
 | `check:unused` | `knip` | `knip.json` |
-| `audit` | `npm audit --audit-level=high` | |
+| `audit` | `npm audit --omit=dev --audit-level=high` | Runtime packages only; Dependabot covers the development ones |
 | `build` / `dev` | Vite | `vite.config.js` |
 | `prepare` | `husky` (installs the hooks) | |
 

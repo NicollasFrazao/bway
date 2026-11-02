@@ -40,7 +40,7 @@ fixed by a phase of the rewrite:
 | Check | Where |
 | --- | --- |
 | Known vulnerabilities in Composer packages | `audit` CI job (`composer audit`) |
-| Known high or critical vulnerabilities in npm packages | `npm-audit` CI job |
+| Known high or critical vulnerabilities in runtime npm packages | `npm-audit` CI job (`--omit=dev`); development packages are covered by Dependabot alerts |
 | Static analysis of the JavaScript and the workflows | CodeQL (`.github/workflows/codeql.yml`), on every push, pull request and weekly |
 | Dangerous PHP (`eval`, `exit`, debug output) | PHP_CodeSniffer `Generic.PHP.ForbiddenFunctions`, PHPMD design rules |
 | Type confusion, loose comparisons | PHPStan max + `phpstan-strict-rules` |

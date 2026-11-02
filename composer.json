@@ -9,7 +9,7 @@
         "a-star",
         "routing"
     ],
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^8.4",
         "laravel/framework": "^13.17",
@@ -64,8 +64,8 @@
             "@analyse:rector"
         ],
         "analyse:phpstan": "phpstan analyse --memory-limit=1G --no-progress",
-        "analyse:phpmd": "phpmd analyze --ruleset=phpmd.xml app database routes",
-        "analyse:magic-numbers": "phpmnd app routes --extensions=all",
+        "analyse:phpmd": "phpmd analyze --ruleset=phpmd.xml app database routes phpcs/Bway",
+        "analyse:magic-numbers": "phpmnd app routes phpcs/Bway --extensions=all",
         "analyse:rector": "rector process --dry-run --no-progress-bar",
         "check:architecture": "deptrac analyse --no-progress --fail-on-uncovered --report-uncovered",
         "check:unused": "composer-unused --no-progress",
