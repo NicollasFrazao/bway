@@ -1,0 +1,40 @@
+name: Bug report
+description: Something behaves differently from the README, the docs or the tests.
+title: 'fix: '
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: The screen or request, what you did, and what you saw.
+      placeholder: |
+        Store 1, list with milk and bread -> the visit starts at the bakery, not at the entrance
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: Which documented behaviour this contradicts.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: Ideally a failing test, or the smallest sequence of steps from `make up`.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+      placeholder: e.g. 1a2b3c4
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, Docker version, and anything non-default in `.env`.

@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/laravel/pint/main/schema.json",
+    "preset": "laravel",
+    "rules": {
+        "declare_strict_types": true,
+        "strict_comparison": true,
+        "strict_param": true,
+        "void_return": true,
+        "final_class": false,
+        "ordered_imports": {
+            "sort_algorithm": "alpha",
+            "imports_order": ["class", "function", "const"]
+        }
+    }
+}

@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<!--
+    What Pint does not cover: doc comments, readability limits and structural rules.
+    Formatting is Pint's job (pint.json); nothing here may contradict it.
+-->
+<ruleset name="bway"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+    <description>Doc comments and readability rules for bway.</description>
+
+    <file>app</file>
+    <file>bootstrap/app.php</file>
+    <file>config</file>
+    <file>database</file>
+    <file>routes</file>
+    <file>tests</file>
+
+    <arg name="basepath" value="."/>
+    <arg name="extensions" value="php"/>
+    <arg name="cache" value="storage/framework/cache/phpcs.cache"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <!-- Warnings fail the build too. -->
+    <config name="ignore_warnings_on_exit" value="0"/>
+
+    <!-- Every class, interface, trait and enum has a doc comment; no PEAR file-level tags. -->
+    <rule ref="PEAR.Commenting.ClassComment">
+        <exclude name="PEAR.Commenting.ClassComment.MissingCategoryTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingPackageTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingAuthorTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingLicenseTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingLinkTag"/>
+    </rule>
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+
+    <!--
+        Every public method has a doc comment. @param and @return only when they add something the
+        type does not say, so their absence is not an error; when present, @param has a description.
+    -->
+    <rule ref="PEAR.Commenting.FunctionComment">
+        <properties>
+            <property name="minimumVisibility" value="public"/>
+        </properties>
+        <exclude name="PEAR.Commenting.FunctionComment.MissingParamTag"/>
+        <exclude name="PEAR.Commenting.FunctionComment.MissingReturn"/>
+        <exclude name="PEAR.Commenting.FunctionComment.SpacingAfterParamType"/>
+        <exclude name="PEAR.Commenting.FunctionComment.SpacingAfterParamName"/>
+        <!-- PEAR matches tags by position, so documenting only some parameters would fail; PHPStan
+             reports a @param that names no parameter. -->
+        <exclude name="PEAR.Commenting.FunctionComment.ParamNameNoMatch"/>
+    </rule>
+
+    <!-- A summary sentence, then a blank line, then the tags in groups. -->
+    <rule ref="Generic.Commenting.DocComment">
+        <exclude name="Generic.Commenting.DocComment.TagValueIndent"/>
+        <exclude name="Generic.Commenting.DocComment.NonParamGroup"/>
+        <exclude name="Generic.Commenting.DocComment.ParamNotFirst"/>
+        <exclude name="Generic.Commenting.DocComment.ParamGroup"/>
+        <exclude name="Generic.Commenting.DocComment.TagsNotGrouped"/>
+        <!-- A summary-only comment may stay on one line; Pint owns that layout. -->
+        <exclude name="Generic.Commenting.DocComment.ContentAfterOpen"/>
+        <exclude name="Generic.Commenting.DocComment.ContentBeforeClose"/>
+        <exclude name="Generic.Commenting.DocComment.SpacingBeforeShort"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
+        <properties>
+            <property name="linesCountBetweenDescriptionAndAnnotations" value="1"/>
+            <property name="linesCountBetweenDifferentAnnotationsTypes" value="1"/>
+            <property name="annotationsGroups" type="array">
+                <element value="@template,@template-covariant,@extends,@implements,@use"/>
+                <!-- @param and @return share a group, as in Pint's phpdoc_separation. -->
+                <element value="@var,@param,@return"/>
+                <element value="@throws"/>
+                <element value="@see,@example"/>
+            </property>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Commenting.EmptyComment"/>
+    <rule ref="SlevomatCodingStandard.Commenting.UselessInheritDocComment"/>
+    <rule ref="SlevomatCodingStandard.Commenting.DeprecatedAnnotationDeclaration"/>
+
+    <!-- Comments say why; no commented-out code; deferred work is an issue, not a TODO. -->
+    <rule ref="Squiz.PHP.CommentedOutCode">
+        <properties>
+            <property name="maxPercentage" value="40"/>
+        </properties>
+        <type>error</type>
+    </rule>
+    <rule ref="Generic.Commenting.Todo">
+        <type>error</type>
+    </rule>
+    <rule ref="Generic.Commenting.Fixme"/>
+
+    <!-- Readability limits. -->
+    <rule ref="Generic.Metrics.NestingLevel">
+        <properties>
+            <property name="nestingLevel" value="3"/>
+            <property name="absoluteNestingLevel" value="3"/>
+        </properties>
+    </rule>
+    <rule ref="Generic.Formatting.DisallowMultipleStatements"/>
+    <rule ref="SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition">
+        <properties>
+            <property name="minLineLength" value="0"/>
+            <property name="booleanOperatorOnPreviousLine" value="false"/>
+            <property name="alwaysSplitAllConditionParts" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing"/>
+    <rule ref="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing">
+        <properties>
+            <property name="allowSingleLineYieldStacking" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
+    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowContinueWithoutIntegerOperandInSwitch"/>
+    <rule ref="SlevomatCodingStandard.Functions.StaticClosure">
+        <!-- Pest closures are bound to the test case: $this must stay available. -->
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+
+    <!-- Types: strict types everywhere, native types where PHP has them. -->
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+        <properties>
+            <property name="spacesCountAroundEqualsSign" value="0"/>
+            <property name="linesCountBeforeDeclare" value="1"/>
+            <property name="linesCountAfterDeclare" value="1"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint">
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingTraversableTypeHintSpecification"/>
+        <!--
+            Framework properties ($signature, $description) are declared untyped by the parent class;
+            PHPStan reads their type from the parent, and reports any other untyped property.
+        -->
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingAnyTypeHint"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.UselessConstantTypeHint"/>
+
+    <!-- Classes. -->
+    <rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion"/>
+    <rule ref="SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants"/>
+    <rule ref="SlevomatCodingStandard.Classes.UselessLateStaticBinding"/>
+
+    <!-- Unused and redundant code. -->
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Variables.UnusedVariable"/>
+    <rule ref="SlevomatCodingStandard.Variables.UselessVariable"/>
+    <rule ref="SlevomatCodingStandard.Functions.UnusedInheritedVariablePassedToClosure"/>
+    <rule ref="SlevomatCodingStandard.Exceptions.DeadCatch"/>
+    <rule ref="SlevomatCodingStandard.PHP.UselessParentheses"/>
+    <rule ref="SlevomatCodingStandard.PHP.UselessSemicolon"/>
+    <rule ref="SlevomatCodingStandard.PHP.DisallowDirectMagicInvokeCall"/>
+    <rule ref="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array">
+                <element key="eval" value="null"/>
+                <element key="dd" value="null"/>
+                <element key="dump" value="null"/>
+                <element key="var_dump" value="null"/>
+                <element key="print_r" value="null"/>
+                <element key="die" value="null"/>
+                <element key="exit" value="null"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

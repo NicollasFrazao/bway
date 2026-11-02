@@ -1,0 +1,12 @@
+#!/bin/sh
+# Runs a PHP command in the app container when it is running, otherwise with the host's PHP.
+# Used by the git hooks, which run on the host. Paths must be relative to the repository root.
+set -eu
+
+cd "$(dirname "$0")/.."
+
+if docker compose ps --status running --services 2>/dev/null | grep -qx app; then
+    exec docker compose exec -T app php "$@"
+fi
+
+exec php "$@"

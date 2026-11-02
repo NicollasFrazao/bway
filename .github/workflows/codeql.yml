@@ -1,0 +1,28 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+
+# CodeQL has no PHP analyser: the PHP code is covered by PHPStan, PHPMD and PHP_CodeSniffer in ci.yml.
+# This analyses the JavaScript (Vite entry points, tool configs) and the workflows themselves.
+jobs:
+  analyze:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript, actions
+          queries: security-and-quality
+      - uses: github/codeql-action/analyze@v4
