@@ -19,6 +19,8 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <!-- A key for the tests only: CI has no .env, and encryption (sessions, cookies) needs one. -->
+        <env name="APP_KEY" value="base64:px7hvDBRaBBErgzRC0U/97vTFEL2pf9TXNwE6T+sPSs="/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>

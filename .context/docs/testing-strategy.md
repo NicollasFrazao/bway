@@ -28,6 +28,8 @@ needs the container is a sign the class reaches outside the domain.
 Feature tests run on SQLite in memory with array cache, session and mail drivers (`phpunit.xml`).
 The `.env` of the Docker stack does not leak in: `phpunit.xml` sets the variables first, and
 Laravel's environment loader never overwrites a variable that is already set.
+`phpunit.xml` also sets a test-only `APP_KEY`, so the tests need no generated key; CI copies
+`.env.example` to `.env` before running them, as a developer's checkout has one.
 
 From B4 (#7) on, the repository tests run against MySQL 8.4 (the same image as `docker-compose.yml`,
 as a service in the CI job), because the queries and constraints are MySQL's.

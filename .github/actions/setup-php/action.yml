@@ -23,3 +23,7 @@ runs:
         restore-keys: composer-${{ runner.os }}-
     - shell: bash
       run: composer install --no-interaction --no-progress --prefer-dist
+    # Laravel reads .env on boot, as on a developer's machine; the tests take their values from
+    # phpunit.xml, which wins because the loader never overwrites a variable already set.
+    - shell: bash
+      run: cp .env.example .env
