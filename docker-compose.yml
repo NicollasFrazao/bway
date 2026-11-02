@@ -1,0 +1,49 @@
+# Local development: the app (FrankenPHP serving public/ on PHP 8.4) and MySQL 8.4.
+# `docker compose up` on a fresh clone installs the dependencies, creates .env,
+# runs the migrations and serves http://localhost:8000.
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/app/Dockerfile
+            args:
+                UID: ${UID:-1000}
+                GID: ${GID:-1000}
+        image: bway-app:dev
+        entrypoint: ["docker/app/entrypoint.sh"]
+        command: ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]
+        ports:
+            - "${APP_PORT:-8000}:8000"
+        # The database settings come from .env (created from .env.example), so the
+        # tests keep the SQLite settings of phpunit.xml.
+        volumes:
+            - .:/app
+        depends_on:
+            mysql:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "curl", "-fsS", "http://localhost:8000/up"]
+            interval: 5s
+            timeout: 3s
+            retries: 30
+            start_period: 120s
+
+    mysql:
+        image: mysql:8.4
+        environment:
+            MYSQL_DATABASE: bway
+            MYSQL_USER: bway
+            MYSQL_PASSWORD: bway
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "${FORWARD_DB_PORT:-33060}:3306"
+        volumes:
+            - mysql-data:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-ubway", "-pbway"]
+            interval: 5s
+            timeout: 3s
+            retries: 30
+
+volumes:
+    mysql-data:
