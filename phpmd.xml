@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+    PHPMD: unused code and size/complexity limits, the rule sets PHPStan does not already cover.
+    Formatting, naming and documentation are Pint's and PHP_CodeSniffer's job.
+-->
+<ruleset name="bway"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd">
+    <description>Unused code and complexity limits for bway.</description>
+
+    <rule ref="rulesets/unusedcode.xml"/>
+
+    <rule ref="rulesets/codesize.xml">
+        <exclude name="ExcessiveParameterList"/>
+        <exclude name="CyclomaticComplexity"/>
+    </rule>
+    <!-- At most four parameters; beyond that, take a DTO. -->
+    <rule ref="rulesets/codesize.xml/ExcessiveParameterList">
+        <properties>
+            <property name="maximum" value="4"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
+        <properties>
+            <property name="maximum" value="10"/>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/design.xml/ExitExpression"/>
+    <rule ref="rulesets/design.xml/EvalExpression"/>
+    <rule ref="rulesets/design.xml/GotoStatement"/>
+    <rule ref="rulesets/design.xml/DevelopmentCodeFragment"/>
+    <rule ref="rulesets/design.xml/CouplingBetweenObjects"/>
+    <rule ref="rulesets/design.xml/DepthOfInheritance"/>
+    <rule ref="rulesets/design.xml/EmptyCatchBlock"/>
+    <rule ref="rulesets/cleancode.xml/BooleanArgumentFlag"/>
+    <rule ref="rulesets/cleancode.xml/ElseExpression"/>
+    <rule ref="rulesets/cleancode.xml/DuplicatedArrayKey"/>
+    <rule ref="rulesets/cleancode.xml/ErrorControlOperator"/>
+</ruleset>

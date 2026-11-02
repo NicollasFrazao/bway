@@ -1,0 +1,70 @@
+# Layer rules (docs/adr/0001-layered-architecture.md). A dependency not listed under `ruleset` is a
+# violation; PHP's own classes (DateTimeImmutable, RuntimeException...) belong to no layer and are
+# allowed everywhere.
+deptrac:
+    paths:
+        - ./app
+    exclude_files:
+        - '#.*/\.gitkeep$#'
+    layers:
+        - name: Domain
+          collectors:
+              - type: classLike
+                value: ^App\\Domain\\.*
+        - name: Application
+          collectors:
+              - type: classLike
+                value: ^App\\Application\\.*
+        - name: Infrastructure
+          collectors:
+              - type: classLike
+                value: ^App\\Infrastructure\\.*
+        - name: Http
+          collectors:
+              - type: classLike
+                value: ^App\\Http\\.*
+        # Developer tooling (php artisan context:*): no business code.
+        - name: Console
+          collectors:
+              - type: classLike
+                value: ^App\\Console\\.*
+        # The composition root: binds ports to adapters, so it may see every layer.
+        - name: Providers
+          collectors:
+              - type: classLike
+                value: ^App\\Providers\\.*
+        # Factories and seeders (database/), used by the Eloquent models.
+        - name: Database
+          collectors:
+              - type: classLike
+                value: ^Database\\.*
+        # Every third-party class. Domain and Application must not touch any of them.
+        - name: Vendor
+          collectors:
+              - type: classLike
+                value: ^(Illuminate|Laravel|Symfony|Psr|Carbon|Doctrine|GuzzleHttp|League|Monolog)\\.*
+              - type: classLike
+                value: ^(Pest|PHPUnit|Mockery|Faker)\\.*
+    ruleset:
+        Domain: ~
+        Application:
+            - Domain
+        Infrastructure:
+            - Domain
+            - Application
+            - Database
+            - Vendor
+        Http:
+            - Domain
+            - Application
+            - Vendor
+        Console:
+            - Vendor
+        Providers:
+            - Domain
+            - Application
+            - Infrastructure
+            - Http
+            - Vendor
+        Database: ~
+        Vendor: ~

@@ -1,0 +1,37 @@
+# Larastan at the strictest level, plus the rules that play the part of Sonar in this project:
+# strict rules, cognitive complexity and dead code. The extensions are registered by
+# phpstan/extension-installer. A rule is fixed in the code, never added to an ignore list.
+parameters:
+    level: max
+    paths:
+        - app
+        - bootstrap/app.php
+        - config
+        - database
+        - routes
+        - tests
+    tmpDir: storage/framework/cache/phpstan
+    checkMissingCallableSignature: true
+    checkUninitializedProperties: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkImplicitMixed: true
+    checkBenevolentUnionTypes: true
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
+    reportAnyTypeWideningInVarTag: true
+    reportUnmatchedIgnoredErrors: true
+
+    # tomasvotruba/cognitive-complexity: the Sonar limit of 15 per method.
+    cognitive_complexity:
+        function: 15
+        class: 50
+
+    shipmonkDeadCode:
+        detect:
+            deadMethods: true
+            deadConstants: true
+            deadEnumCases: true
+            deadProperties:
+                neverRead: true
+                neverWritten: true
+        reportTransitivelyDeadMethodAsSeparateError: true
