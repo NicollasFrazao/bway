@@ -1,0 +1,184 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The git hooks are for local commits; CI runs the checks as jobs.
+  HUSKY: '0'
+
+# One job per check, so each one can be a required status check on its own.
+# The job ids are the check names: renaming one means updating the ruleset of master.
+jobs:
+  pint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - run: composer lint:pint
+
+  phpcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - run: composer lint:phpcs
+
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - name: Larastan max, strict rules, cognitive complexity, dead code
+        run: composer analyse:phpstan
+
+  phpmd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - run: composer analyse:phpmd
+
+  magic-numbers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - run: composer analyse:magic-numbers
+
+  rector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - name: Rector dry run, any change fails
+        run: composer analyse:rector
+
+  deptrac:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - name: Layer rules
+        run: composer check:architecture
+
+  unused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - name: Composer packages nothing uses
+        run: composer check:unused
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+        with:
+          coverage: pcov
+      - name: Tests with the 80% coverage gate
+        run: composer test:coverage -- --coverage-clover=coverage/clover.xml
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 14
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+      - name: Composer packages with known vulnerabilities
+        run: composer audit --locked
+
+  context:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-php
+      - name: Agent surfaces are copies of .context/docs/README.md
+        run: composer check:context
+
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  knip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unused JavaScript files, exports and dependencies
+        run: npm run check:unused
+
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: npm packages with known high or critical vulnerabilities
+        run: npm run audit
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the stack as a fresh clone would
+        # The image runs as the host user so it can write vendor/ in the bind mount.
+        run: env UID="$(id -u)" GID="$(id -g)" docker compose up --detach --build --wait --wait-timeout 600
+      - name: The welcome page answers
+        run: curl --fail --silent --show-error http://localhost:8000/ | grep --quiet '<title>bway'
+      - name: Logs
+        if: failure()
+        run: docker compose logs
+      - name: Stop
+        if: always()
+        run: docker compose down --volumes
+
+  commitlint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Every commit of the pull request follows Conventional Commits
+        run: >-
+          npx commitlint
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+          --verbose

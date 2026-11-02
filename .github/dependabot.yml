@@ -1,0 +1,73 @@
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      laravel:
+        patterns:
+          - 'laravel/*'
+      quality:
+        patterns:
+          - 'phpstan/*'
+          - 'larastan/*'
+          - 'rector/*'
+          - 'squizlabs/*'
+          - 'slevomat/*'
+          - 'phpmd/*'
+          - 'deptrac/*'
+          - 'shipmonk/*'
+          - 'tomasvotruba/*'
+          - 'povils/*'
+          - 'icanhazstring/*'
+      test:
+        patterns:
+          - 'pestphp/*'
+          - 'phpunit/*'
+          - 'mockery/*'
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      lint:
+        patterns:
+          - 'eslint*'
+          - '@eslint/*'
+          - 'globals'
+      commitlint:
+        patterns:
+          - '@commitlint/*'
+      assets:
+        patterns:
+          - 'vite'
+          - 'laravel-vite-plugin'
+          - 'tailwindcss'
+          - '@tailwindcss/*'
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+  - package-ecosystem: docker
+    directory: /docker/app
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
