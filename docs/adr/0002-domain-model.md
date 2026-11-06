@@ -40,7 +40,8 @@ few choices shape every later phase (routing, visit, persistence) and are record
   built by named constructors, so `Http` can map all of them to one kind of response.
 
 Left to the phase that needs them: which products each sector sells (B3, the visit), the grid's size
-and whether sectors and partitions fit inside it or overlap (B2, the mapping).
+and whether sectors and partitions fit inside it or overlap (B2, the mapping). B2 decided the latter in
+[ADR 0003](0003-floor-plan-mapping-and-routing.md): parts may not overlap, and must fit the grid.
 
 ## Alternatives considered
 

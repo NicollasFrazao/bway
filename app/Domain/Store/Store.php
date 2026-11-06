@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Domain\Store;
 
+use App\Domain\Grid\Grid;
+use App\Domain\Grid\GridArea;
 use App\Domain\Shared\Name;
 
 /**
  * A supermarket laid out as sectors and partitions on a grid (aggregate root).
  *
- * A store is valid from the moment it exists: exactly one of its sectors is the entrance, and no
- * sector or partition appears twice.
+ * A store is valid from the moment it exists: exactly one of its sectors is the entrance, no
+ * sector or partition appears twice, and no two of them share a cell. Whether they fit the grid of
+ * the floor plan is checked when the plan is mapped (ensureFitsInside()).
  */
 final readonly class Store
 {
@@ -43,6 +46,7 @@ final readonly class Store
      * @throws DuplicatePartition when two partitions share an id.
      * @throws StoreWithoutEntrance when no sector is the entrance.
      * @throws StoreWithSeveralEntrances when more than one sector is the entrance.
+     * @throws OverlappingLayout when two sectors or partitions share a cell.
      */
     public function __construct(
         public StoreId $id,
@@ -53,6 +57,7 @@ final readonly class Store
         $this->sectors = $this->indexSectors($sectors);
         $this->partitions = $this->indexPartitions($partitions);
         $this->entrance = $this->onlyEntrance($sectors);
+        $this->ensureNoOverlap();
     }
 
     /**
@@ -91,6 +96,20 @@ final readonly class Store
     public function sector(SectorId $id): Sector
     {
         return $this->sectors[$id->value] ?? throw SectorNotInStore::forSector($this->id, $id);
+    }
+
+    /**
+     * Refuses a grid that some sector or partition reaches beyond.
+     *
+     * @throws LayoutOutsideGrid when a sector or partition does not lie wholly on the grid.
+     */
+    public function ensureFitsInside(Grid $grid): void
+    {
+        foreach ($this->namedAreas() as $part => $area) {
+            if (! $grid->containsArea($area)) {
+                throw LayoutOutsideGrid::forPart($this->id, $part, $grid);
+            }
+        }
     }
 
     /**
@@ -166,5 +185,45 @@ final readonly class Store
         }
 
         return $entrances[0];
+    }
+
+    /**
+     * Refuses a layout in which two parts share a cell.
+     *
+     * @throws OverlappingLayout when two sectors or partitions share a cell.
+     */
+    private function ensureNoOverlap(): void
+    {
+        $remaining = $this->namedAreas();
+
+        foreach ($this->namedAreas() as $part => $area) {
+            unset($remaining[$part]);
+
+            foreach ($remaining as $otherPart => $otherArea) {
+                if ($area->overlaps($otherArea)) {
+                    throw OverlappingLayout::between($this->id, $part, $otherPart);
+                }
+            }
+        }
+    }
+
+    /**
+     * The area of every sector and partition, keyed by a name for messages ("sector 2").
+     *
+     * @return array<string, GridArea>
+     */
+    private function namedAreas(): array
+    {
+        $areas = [];
+
+        foreach ($this->sectors as $sector) {
+            $areas['sector '.$sector->id->value] = $sector->area;
+        }
+
+        foreach ($this->partitions as $partition) {
+            $areas['partition '.$partition->id->value] = $partition->area;
+        }
+
+        return $areas;
     }
 }

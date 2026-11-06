@@ -24,20 +24,26 @@ Use the English term in code, tests, logs and docs, with this meaning. The v1 co
 | **list item** | One product in a shopping list: its id and the name it had when added. | row of `tb_lista_compras` |
 | **acquire** | Mark a list item as bought during a visit; it leaves the list. | `adquirir`, `ic_adquirido` |
 | **store** | A supermarket with a floor plan, sectors and partitions. | `Estabelecimento`, `tb_estabelecimento` |
-| **floor plan** | The image of a store's layout that the mapping reads. | `planta` |
-| **mapping** | Turning a floor plan into a grid, by classifying each pixel's colour. | `mapeamento`, `mapearPlanta` |
-| **grid** | The mapped store: a matrix of cells, each free floor, wall, sector or partition. | `mapeamento.json` (`0` floor, `1` wall, `2` sector, `3` partition, `4` route) |
+| **floor plan** | The image of a store's layout that the mapping reads (JPEG, PNG, GIF or WebP), drawn in the legend. | `planta` |
+| **legend** | The colours a floor plan is drawn in: red wall, blue sector outline, green partition, orange walkway, anything else free floor (`LegendColorClassifier`, with v1's tolerances). | — |
+| **wall frame** | The rectangle of wall around the store on the floor plan; the mapping keeps only what it encloses, the frame included. | `extremidade` |
+| **mapping** | Turning a floor plan into a grid, by classifying each pixel's colour (`FloorPlanMapper`). | `mapeamento`, `mapearPlanta` |
+| **grid** | The mapped store: a rectangle of cells, each of one cell kind (`Grid`). | `mapeamento.json`, `ds_mapeamento` |
+| **cell kind** | What a cell is (`CellKind`): free floor, wall, sector outline, partition or walkway, coded 0 to 4 as in v1. | `0` floor, `1` wall, `2` sector, `3` partition, `4` route |
+| **walkway** | An aisle painted orange on the floor plan; the only kind of cell a route may enter. | `4` ("Rota") |
 | **cell** | One position of the grid; addressed by a `GridCoordinate` (x, y), both from 0, y counting rows from the top. | — |
 | **grid area** | A rectangle of cells (`GridArea`): its top-left cell, a width and a height of at least one cell. The floor of a sector, the footprint of a partition. | `vl_x`, `vl_y`, `vl_largura`, `vl_comprimento` |
-| **sector** | An area of the store where a group of products is sold (a rectangle on the grid). | `Setor`, `tb_setor` |
+| **sector** | An area of the store where a group of products is sold (a rectangle on the grid). Sectors and partitions never share a cell (`OverlappingLayout`) and must fit the grid (`LayoutOutsideGrid`). | `Setor`, `tb_setor` |
+| **centre** (of a sector) | The cell routes to and from a sector start and end on: the area's origin plus half each side, rounded down (`GridArea::center()`). | `int(vl_x + vl_largura / 2)` |
 | **entrance** | The sector a visit starts from. A store has exactly one (`StoreWithoutEntrance`, `StoreWithSeveralEntrances`). | `ic_entrada` |
 | **sector kind** | What a sector is for: `Entrance` or `Sales` (`SectorKind`). | `ic_entrada` true / false |
 | **partition** | A shelf or divider inside the store; it blocks movement. | `Divisoria`, `tb_divisoria` |
 | **sector product** | The fact that a store sells a product in a given sector. | `setor_produto` |
-| **route** | A walkable path of cells between two sectors, with its length in cells. | `Rota`, `tb_rota`, `gerarRota` |
-| **route length** | The number of steps of a route. v1 counted a missing route as 0; v2 never does. | — |
-| **pathfinder** | The search that finds a route on the grid; `AStarPathfinder` is the implementation. | `gerarRota` (Python) |
-| **heuristic** | The distance estimate A* uses; Manhattan distance, as in v1. | — |
+| **route** | The cells walked from a start to a target, both included, each one step (beside, above or below) from the last (`Route`). | `Rota`, `tb_rota`, `gerarRota` |
+| **route length** | The number of steps of a route: its cells minus one, 0 from a sector to itself. v1 counted the entries of its route file (steps + 1) and a missing route as 0; v2 reports a missing route as `RouteNotFound`. | — |
+| **route cache** | The route of each ordered pair of sectors of a store, found once and kept (`RouteCache`); mapping the store again forgets them. | `rotas/<store>-<from>-<to>.json`, `tb_rota` |
+| **pathfinder** | The search that finds a shortest route on the grid; `AStarPathfinder` is the implementation. | `gerarRota` (Python) |
+| **heuristic** | The distance estimate A* uses (`Heuristic`); Manhattan distance (`ManhattanDistance`), as in v1. | — |
 | **visit** | One trip through a store to buy the items of a list: the sectors to walk through, in order. | `Carrinho`, `tb_carrinho` |
 | **visit planner** | The domain service that orders the sectors of a visit. | the ordering in `CarrinhoController` |
 | **ordering strategy** | How the planner chooses the next sector; the first one is nearest neighbour from the entrance (v1's behaviour). | — |

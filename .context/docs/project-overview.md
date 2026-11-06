@@ -30,8 +30,10 @@ submitted then is frozen as the **`v1` tag** and the **`legacy/v1` branch**:
 
 What v1 left undone or wrong, and v2 fixes: no seed data for stores, the store hard-coded to `1`,
 store creation not implemented, plain-text passwords, user ids taken from the URL, a pair of sectors
-without a stored route counted as length 0, and the mapping file written under one name and read
-under another. The paper also describes a React Native client and BLE beacons in each sector; they
+without a stored route counted as length 0, the mapping file written under one name and read
+under another, a search that ranked cells by straight-line distance from the start instead of steps
+walked (3 of store 1's 30 routes 26 steps longer than the shortest), and a mapping that left the
+right-hand wall open and drew a wall across one row. The paper also describes a React Native client and BLE beacons in each sector; they
 were never in this repository and stay out of scope.
 
 ## v2: the rewrite
@@ -48,7 +50,7 @@ The plan is the umbrella issue [#2](https://github.com/NicollasFrazao/bway/issue
 | B0 | #3 | v1 tag, Laravel 13 skeleton, Docker, quality gate and CI |
 | B0.1 | #19 | Engineering standards: this context base, contribution rules, guard rails, doc comments |
 | B1 | #4 | Domain model: shopping list, products, stores, sectors and partitions |
-| B2 | #5 | Floor-plan mapping and A* routing in PHP, matching v1's routes for store 1 |
+| B2 | #5 | Floor-plan mapping and A* routing in PHP, golden-tested against v1's mapping and routes for store 1 |
 | B3 | #6 | Visit planner: order the sectors of a store visit |
 | B4 | #7 | Persistence: migrations, repositories and seed data |
 | B5 | #8 | Accounts and authorisation |

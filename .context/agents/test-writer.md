@@ -34,9 +34,12 @@ Read [testing-strategy.md](../docs/testing-strategy.md) first.
 
 ## Routing golden tests (B2)
 
-The v1 mapping and the routes of store 1 live in the `v1` tag under
-`storage/app/public/estabelecimentos/`. Copy them into `tests/Fixtures/v1/` and assert the PHP
-mapper and pathfinder produce the same grid and the same cells, so the port is proven equal.
+The v1 floor plan, mapping and routes of store 1 are in `tests/Fixtures/v1/store-1/`, read through
+`tests/Support/V1StoreOne.php`; `tests/Feature/Golden/StoreOneTest.php` asserts the PHP mapper and
+pathfinder give the same grid and the same cells, except the differences it lists by name with their
+cause ([ADR 0003](../../docs/adr/0003-floor-plan-mapping-and-routing.md)). A change to the mapping or
+the search that moves a route must either keep those tests green or add the pair to the list with an
+assertion that explains it — never loosen the comparison.
 
 ## Done when
 

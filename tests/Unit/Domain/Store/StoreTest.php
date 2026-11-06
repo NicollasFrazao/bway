@@ -2,17 +2,24 @@
 
 declare(strict_types=1);
 
+use App\Domain\Grid\GridArea;
+use App\Domain\Grid\GridCoordinate;
 use App\Domain\Shared\Name;
 use App\Domain\Store\DuplicatePartition;
 use App\Domain\Store\DuplicateSector;
+use App\Domain\Store\LayoutOutsideGrid;
+use App\Domain\Store\OverlappingLayout;
 use App\Domain\Store\Partition;
+use App\Domain\Store\PartitionId;
 use App\Domain\Store\Sector;
 use App\Domain\Store\SectorId;
+use App\Domain\Store\SectorKind;
 use App\Domain\Store\SectorNotInStore;
 use App\Domain\Store\Store;
 use App\Domain\Store\StoreId;
 use App\Domain\Store\StoreWithoutEntrance;
 use App\Domain\Store\StoreWithSeveralEntrances;
+use Tests\Support\GridDrawing;
 use Tests\Support\StoreLayout;
 
 /**
@@ -84,3 +91,46 @@ it('refuses a sector it does not have', function (): void {
     expect(fn (): Sector => store([StoreLayout::entrance(1)])->sector(new SectorId(9)))
         ->toThrow(SectorNotInStore::class, 'Store 1 has no sector 9.');
 });
+
+it('refuses two sectors that share a cell', function (): void {
+    $bakery = new Sector(new SectorId(2), Name::from('Bakery'), new GridArea(new GridCoordinate(2, 0), 3, 3), SectorKind::Sales);
+
+    expect(fn (): Store => store([StoreLayout::entrance(1), $bakery]))
+        ->toThrow(OverlappingLayout::class, 'In store 1, sector 1 overlaps sector 2.');
+});
+
+it('refuses a partition on a sector', function (): void {
+    $shelf = new Partition(new PartitionId(4), new GridArea(new GridCoordinate(0, 1), 5, 1));
+
+    expect(fn (): Store => store([StoreLayout::entrance(1)], [$shelf]))
+        ->toThrow(OverlappingLayout::class, 'In store 1, sector 1 overlaps partition 4.');
+});
+
+it('refuses two partitions that share a cell', function (): void {
+    $shelf = new Partition(new PartitionId(5), new GridArea(new GridCoordinate(4, 4), 1, 1));
+
+    expect(fn (): Store => store([StoreLayout::entrance(1)], [StoreLayout::partition(1), $shelf]))
+        ->toThrow(OverlappingLayout::class, 'In store 1, partition 1 overlaps partition 5.');
+});
+
+it('accepts a grid that holds all of its layout', function (): void {
+    $grid = GridDrawing::grid(array_fill(0, 5, str_repeat('.', 8)));
+
+    $layout = store([StoreLayout::entrance(1), StoreLayout::sector(2)], [StoreLayout::partition(1)]);
+
+    expect(function () use ($layout, $grid): void {
+        $layout->ensureFitsInside($grid);
+    })->not->toThrow(LayoutOutsideGrid::class);
+});
+
+it('refuses a grid that a sector or partition reaches beyond', function (int $width, int $height, string $part): void {
+    $grid = GridDrawing::grid(array_fill(0, $height, str_repeat('.', $width)));
+    $layout = store([StoreLayout::entrance(1), StoreLayout::sector(2)], [StoreLayout::partition(1)]);
+
+    expect(function () use ($layout, $grid): void {
+        $layout->ensureFitsInside($grid);
+    })->toThrow(LayoutOutsideGrid::class, "In store 1, {$part} reaches beyond the {$width} x {$height} grid of its floor plan.");
+})->with([
+    'too narrow for sector 2' => [7, 5, 'sector 2'],
+    'too short for partition 1' => [8, 4, 'partition 1'],
+]);
