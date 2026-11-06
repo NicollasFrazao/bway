@@ -95,7 +95,7 @@ Replaying v1 on its own data showed what the port has to keep and what it should
 - No Python is needed to run or test the project; the golden tests run in CI on the committed
   fixtures (1.6 MB, marked `-diff` in `.gitattributes`).
 - The visit planner (B3) orders sectors by route length in steps; v1's counts were one higher for
-  every pair, which does not change a nearest-neighbour order.
+  every pair, which does not change a nearest-neighbour order ([ADR 0004](0004-visit-planning.md)).
 - A floor plan must paint a walkway through the centre of every sector, or the routes to that sector
   fail with `RouteNotFound`; B7's store creation has to say so.
 - The sector and partition rectangles v1's mapping also detected (`setores`, `divisorias`) are not

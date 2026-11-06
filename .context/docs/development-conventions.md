@@ -63,8 +63,8 @@ Enforced by Deptrac (`deptrac.yaml`). The reasoning is in [architecture.md](arch
   I/O is not a domain rule.
 - `app/Application` depends only on `app/Domain`. It reaches storage through the repository
   interfaces declared in `Domain`.
-- `app/Http` and `app/Infrastructure` never depend on each other. They meet in
-  `app/Providers/AppServiceProvider.php`, the composition root.
+- `app/Http` and `app/Infrastructure` never depend on each other. They meet in the service
+  providers of `app/Providers/`, the composition root.
 - Eloquent models live in `app/Infrastructure/Persistence/` and never cross into `Domain` or
   `Application`: a repository maps them to domain objects.
 - A new Composer package used from `app/` is added to the `Vendor` layer in `deptrac.yaml` in the
