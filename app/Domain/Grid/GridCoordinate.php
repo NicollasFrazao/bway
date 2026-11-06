@@ -25,4 +25,21 @@ final readonly class GridCoordinate
             throw NegativeCoordinate::at($x, $y);
         }
     }
+
+    /**
+     * Tells whether both coordinates address the same cell.
+     */
+    public function equals(self $other): bool
+    {
+        return $this->x === $other->x
+            && $this->y === $other->y;
+    }
+
+    /**
+     * Tells whether the other cell is one step away: beside, above or below, not diagonal.
+     */
+    public function isNextTo(self $other): bool
+    {
+        return abs($this->x - $other->x) + abs($this->y - $other->y) === 1;
+    }
 }

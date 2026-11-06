@@ -15,6 +15,9 @@ use App\Domain\Store\SectorKind;
 
 /**
  * Builds the parts of a store for tests that care only about ids and kinds, not about the geometry.
+ *
+ * Each part gets its own 2 x 2 area, so no two parts overlap: sector or entrance n at (3n, 0),
+ * partition n at (3n, 3).
  */
 final class StoreLayout
 {
@@ -23,7 +26,7 @@ final class StoreLayout
      */
     public static function sector(int $id): Sector
     {
-        return new Sector(new SectorId($id), Name::from("Sector {$id}"), self::area(), SectorKind::Sales);
+        return new Sector(new SectorId($id), Name::from("Sector {$id}"), self::area(3 * $id, 0), SectorKind::Sales);
     }
 
     /**
@@ -31,7 +34,7 @@ final class StoreLayout
      */
     public static function entrance(int $id): Sector
     {
-        return new Sector(new SectorId($id), Name::from('Entrance'), self::area(), SectorKind::Entrance);
+        return new Sector(new SectorId($id), Name::from('Entrance'), self::area(3 * $id, 0), SectorKind::Entrance);
     }
 
     /**
@@ -39,14 +42,14 @@ final class StoreLayout
      */
     public static function partition(int $id): Partition
     {
-        return new Partition(new PartitionId($id), self::area());
+        return new Partition(new PartitionId($id), self::area(3 * $id, 3));
     }
 
     /**
-     * The area every part built here occupies.
+     * A 2 x 2 area with its top-left cell at (x, y).
      */
-    private static function area(): GridArea
+    private static function area(int $x, int $y): GridArea
     {
-        return new GridArea(new GridCoordinate(0, 0), 2, 2);
+        return new GridArea(new GridCoordinate($x, $y), 2, 2);
     }
 }
