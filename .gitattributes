@@ -9,3 +9,6 @@
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+# v1 data copied verbatim for the golden tests: one-line JSON nobody reviews line by line.
+/tests/Fixtures/v1/** -diff linguist-generated
