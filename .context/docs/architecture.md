@@ -56,8 +56,11 @@ Checked by `composer check:architecture` (Deptrac, `deptrac.yaml`, run with `--f
 | Controller, form request, resource | `app/Http/` | `ShoppingListController` |
 | Binding of an interface to its implementation | `app/Providers/AppServiceProvider.php` | |
 
-`<Context>` is a folder per part of the domain (`ShoppingList`, `Store`, `Routing`, `Visit`), created
-when its first class arrives.
+`<Context>` is a folder per part of the domain, created when its first class arrives: `Shared`
+(identifiers, `Name`, the `DomainError` base), `Catalog`, `ShoppingList`, `Store`, `Grid`, and later
+`Routing` and `Visit`. A context may use `Shared` and the contexts it builds on (`ShoppingList` uses
+`Catalog`, `Store` uses `Grid`); the choices behind the model are in
+[ADR 0002](/docs/adr/0002-domain-model.md).
 
 ### Design rules inside the layers
 
@@ -67,11 +70,17 @@ when its first class arrives.
   objects are `final readonly`.
 - Variation points are interfaces in `Domain` with one implementation each until a second one is
   needed (for example `Heuristic`, `VisitOrderingStrategy`).
-- Domain errors are dedicated exception classes, named for what went wrong, created by named
-  constructors (`SourceMissing::at($path)` is the pattern, in `app/Console/Context/`).
+- Domain errors are dedicated exception classes extending `App\Domain\Shared\DomainError`, named
+  for what went wrong, created by named constructors (`DuplicateListItem::forProduct($id)`).
 
 ## What exists today
 
+- `app/Domain/` — the domain model of B1 (#4): `Catalog` (`Product`, `ProductName`, the
+  `ProductCatalog` port), `ShoppingList` (the `ShoppingList` aggregate, `ListItem`, the
+  `ShoppingListRepository` port), `Store` (the `Store` aggregate, `Sector`, `SectorKind`, `Partition`,
+  the `StoreRepository` port), `Grid` (`GridCoordinate`, `GridArea`) and `Shared`. No port has a
+  production adapter yet: the in-memory adapters in `tests/Support/Domain/` serve the contract
+  tests until B4 (#7).
 - `app/Infrastructure/Persistence/Eloquent/User.php` — the skeleton's user model, moved out of
   `app/Models` so Eloquent stays in Infrastructure. Accounts are redesigned in B5 (#8).
 - `app/Console/` — `ContextSurfaces` and the two `context:*` commands (see

@@ -60,8 +60,10 @@ Order: B0 → B0.1 → B1 → B2 → B3 → B4 → (B5, B6, B7) → B8.
 
 ## Current state
 
-B0 and B0.1: the skeleton serves Laravel's welcome page, the layer folders are empty, and every
-check of the quality gate runs in CI. No domain code exists yet.
+B0, B0.1 and B1: the skeleton serves Laravel's welcome page and every check of the quality gate runs
+in CI. `app/Domain` holds the domain model (shopping list, catalogue, stores with their sectors and
+partitions, grid coordinates and areas) with its repository interfaces, unit-tested without
+Laravel; nothing uses it from a route yet.
 
 ## Out of scope
 

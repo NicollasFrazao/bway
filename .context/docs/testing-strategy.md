@@ -44,6 +44,11 @@ as a service in the CI job), because the queries and constraints are MySQL's.
   (`Pest\Laravel\get`, the `command()` helper in `tests/Pest.php`).
 - Files the test writes go under the system temp directory, through a helper that deletes them after
   each test (`ScratchRepository::deleteAll()` in `tests/Pest.php`).
+- A port (repository interface) is tested by a **contract**: one test file per port, its tests run
+  `->with()` a dataset of adapters. The in-memory adapter in `tests/Support/Domain/` is the
+  reference; every production adapter joins the dataset (B4 moves the contract to a suite that can
+  reach MySQL). Hand-made domain objects come from small builders such as
+  `tests/Support/StoreLayout.php`.
 - Literal numbers and strings are fine in tests: they are the readable form of a case. Tests are
   exempt from the magic-number check, not from PHPStan or PHP_CodeSniffer.
 
@@ -60,6 +65,8 @@ as a service in the CI job), because the queries and constraints are MySQL's.
 
 ## Today
 
-21 tests: the welcome page and the health route, the `context:*` commands and their classes, and
-the user model (password hashing, hidden attributes, the seeder). They cover 100% of the lines of
-`app/`.
+102 tests (datasets counted one per case): the welcome page and the health route, the `context:*`
+commands and their classes, the user model (password hashing, hidden attributes, the seeder), and the
+B1 domain in `tests/Unit/Domain/` — every invariant of the shopping list and the store, the value
+objects, every domain exception, and the contracts of the three ports against their in-memory
+adapters. They cover 100% of the lines of `app/`.
