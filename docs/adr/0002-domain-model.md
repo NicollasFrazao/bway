@@ -28,7 +28,8 @@ few choices shape every later phase (routing, visit, persistence) and are record
   query (`orderBy('nm_produto')`), and ordering for display stays a reader's concern.
 - **Acquiring an item removes it from the list**, as `CarrinhoController::update` did; removing or
   acquiring a product that is not on the list is an error (`ProductNotInList`), where v1 detached
-  silently. The visit that records what was acquired is B3's.
+  silently. The visit that records what was acquired is B3's; B3 decided in
+  [ADR 0004](0004-visit-planning.md) that a visit is planned from the list each time, not stored.
 - **The entrance is a kind of sector** (`SectorKind::Entrance`), as v1's `ic_entrada` flag was, and
   `Store` refuses at construction a layout with no entrance or with several. An enum, not a boolean:
   a boolean argument hides its meaning at the call site (PHPMD `BooleanArgumentFlag`).
@@ -41,7 +42,9 @@ few choices shape every later phase (routing, visit, persistence) and are record
 
 Left to the phase that needs them: which products each sector sells (B3, the visit), the grid's size
 and whether sectors and partitions fit inside it or overlap (B2, the mapping). B2 decided the latter in
-[ADR 0003](0003-floor-plan-mapping-and-routing.md): parts may not overlap, and must fit the grid.
+[ADR 0003](0003-floor-plan-mapping-and-routing.md): parts may not overlap, and must fit the grid. B3
+decided the former in [ADR 0004](0004-visit-planning.md): an `Assortment` of the store, one sector
+per product.
 
 ## Alternatives considered
 

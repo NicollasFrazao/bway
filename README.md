@@ -9,8 +9,10 @@ computed with A* over a mapped floor plan.
 
 ## Status
 
-Phase B0/B0.1: a Laravel 13 (PHP 8.4) skeleton on Docker with the full quality gate in CI. The
-domain (shopping list, stores, sectors, A* routing, visit planning) arrives in the next phases.
+Phases B0 to B3: a Laravel 13 (PHP 8.4) skeleton on Docker with the full quality gate in CI, and
+the domain — shopping list, stores and their sectors, floor-plan mapping, A* routing and visit
+planning — as plain PHP with its use cases, tested without the framework. Persistence and the
+screens arrive in the next phases.
 
 ## Running locally
 

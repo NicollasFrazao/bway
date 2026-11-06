@@ -62,10 +62,13 @@ Order: B0 → B0.1 → B1 → B2 → B3 → B4 → (B5, B6, B7) → B8.
 
 ## Current state
 
-B0, B0.1 and B1: the skeleton serves Laravel's welcome page and every check of the quality gate runs
-in CI. `app/Domain` holds the domain model (shopping list, catalogue, stores with their sectors and
-partitions, grid coordinates and areas) with its repository interfaces, unit-tested without
-Laravel; nothing uses it from a route yet.
+B0 to B3: the skeleton serves Laravel's welcome page and every check of the quality gate runs in
+CI. `app/Domain` holds the domain model (shopping list, catalogue, stores with their sectors,
+partitions and assortment, grids), the floor-plan mapping and the A* routing (B2), and the visit
+planner (B3: the list grouped by sector, unsold items reported, the sectors ordered from the
+entrance by nearest neighbour improved by 2-opt, on real route lengths), unit-tested without
+Laravel and golden-tested against v1's store 1. The use cases run only in tests: persistence is B4
+and nothing uses them from a route yet.
 
 ## Out of scope
 

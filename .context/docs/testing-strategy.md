@@ -52,7 +52,9 @@ as a service in the CI job), because the queries and constraints are MySQL's.
 - Grids and floor plans are drawn as text: `tests/Support/GridDrawing.php` (`#` wall, `o` walkway,
   `A` and `B` the start and the target, routes traced back with `*`), `DrawnFloorPlan.php` and
   `TextFloorPlanDecoder.php` (pixels in the legend's colours), `CornerShop.php` (a store small
-  enough to draw).
+  enough to draw), `AisleShop.php` (one aisle, with an assortment and lists, for the visit).
+  `tests/Support/Domain/FixedRouteLengths.php` gives route lengths from a hand-made table and
+  records the pairs asked for.
 - Literal numbers and strings are fine in tests: they are the readable form of a case. Tests are
   exempt from the magic-number check, not from PHPStan or PHP_CodeSniffer.
 
@@ -75,23 +77,33 @@ JPEG with GD and asserts:
 A difference not listed there fails. [ADR 0003](/docs/adr/0003-floor-plan-mapping-and-routing.md)
 records why each listed one is accepted.
 
+`tests/Feature/Golden/StoreOneVisitTest.php` plans a visit of store 1 (sector 2 as the entrance) for
+a sample list that needs the five other sectors and has one product the store does not sell. It
+asserts that every route the visit takes is as long as v1 stored it, that nearest neighbour gives
+v1's order (3, 6, 5, 10, 11: 1,259 steps), and that the `PlanVisit` use case, with the production
+binding of 2-opt over nearest neighbour, gives 3, 5, 6, 10, 11 (1,193 steps), the shortest of the
+120 orders, with the items grouped by sector and the unsold product reported.
+[ADR 0004](/docs/adr/0004-visit-planning.md) records why.
+
 ## What each phase must test
 
 | Phase | Tests |
 | --- | --- |
 | B1 domain | Every invariant: no duplicate product in a list, acquiring removes an item, exactly one entrance per store; every domain exception |
 | B2 routing | Golden tests against the mapping and routes of store 1 committed in `v1` (see above); unreachable target, start equals target, walls and partitions block movement; the contracts of `StoreGridRepository` and `RouteCache` against their in-memory and filesystem adapters |
-| B3 visit | Deterministic order on small hand-made grids; products not sold in the store are reported |
+| B3 visit | Deterministic order on small hand-made grids (`tests/Support/AisleShop.php`, where nearest neighbour is not the shortest) and hand-made distance tables; products not sold in the store are reported; the golden visit of store 1 (see above); the contract of `AssortmentRepository` |
 | B4 persistence | Each repository against MySQL; the seeded store supports the whole flow |
 | B5 accounts | Access to another user's list is denied; rate limiting; CSRF |
 | B6, B7 | Feature tests of the main flows and of the admin flow and its queued job |
 
 ## Today
 
-330 tests (datasets counted one per case): the welcome page and the health route, the `context:*`
+379 tests (datasets counted one per case): the welcome page and the health route, the `context:*`
 commands and their classes, the user model (password hashing, hidden attributes, the seeder), the
 domain in `tests/Unit/Domain/` — every invariant of the shopping list and the store (layout overlap
-and fit included), the value objects, the legend, the mapper, the A* search on drawn grids, every
-domain exception, and the contracts of the B1 ports against their in-memory adapters — the B2 use
-cases in `tests/Unit/Application/`, the GD decoder, the filesystem adapters (by contract), the
-composition root, and the golden tests of store 1. They cover 100% of the lines of `app/`.
+and fit, the assortment included), the value objects, the legend, the mapper, the A* search on drawn
+grids, the visit planner and both ordering strategies, every domain exception, and the contracts of
+the B1 and B3 ports against their in-memory adapters — the B2 and B3 use cases in
+`tests/Unit/Application/`, the GD decoder, the filesystem adapters (by contract), the composition
+root, and the golden tests of store 1 (mapping, routes and visit). They cover 100% of the lines of
+`app/`.

@@ -27,6 +27,7 @@ use App\Domain\Store\GridNotMapped;
 use App\Domain\Store\LayoutOutsideGrid;
 use App\Domain\Store\OverlappingLayout;
 use App\Domain\Store\PartitionId;
+use App\Domain\Store\ProductInSeveralSectors;
 use App\Domain\Store\SectorId;
 use App\Domain\Store\SectorNotInStore;
 use App\Domain\Store\StoreId;
@@ -51,6 +52,7 @@ it('makes every domain exception a domain error, so the outer layers can catch t
     'duplicate sector' => [DuplicateSector::inStore(new StoreId(1), new SectorId(1))],
     'duplicate partition' => [DuplicatePartition::inStore(new StoreId(1), new PartitionId(1))],
     'sector not in store' => [SectorNotInStore::forSector(new StoreId(1), new SectorId(1))],
+    'product in several sectors' => [ProductInSeveralSectors::inStore(new StoreId(1), new ProductId(1), new SectorId(1), new SectorId(2))],
     'overlapping layout' => [OverlappingLayout::between(new StoreId(1), 'sector 1', 'sector 2')],
     'layout outside grid' => [LayoutOutsideGrid::forPart(new StoreId(1), 'sector 1', GridDrawing::grid(['.']))],
     'grid not mapped' => [GridNotMapped::forStore(new StoreId(1))],
