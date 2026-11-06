@@ -20,10 +20,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Composition root: the one place that binds the ports of the inner layers to their adapters.
+ * Composition root of the floor plans and the routing: binds their ports to their adapters.
  *
- * It may depend on every layer, and no other class may. StoreRepository and the other repositories
- * of B1 have no production adapter until issue #7.
+ * The providers in app/Providers are the only classes that may depend on every layer; the visit
+ * ports are bound in VisitServiceProvider. StoreRepository and the other repositories of B1 have no
+ * production adapter until issue #7.
  */
 final class AppServiceProvider extends ServiceProvider
 {
