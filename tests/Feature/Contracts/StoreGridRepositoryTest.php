@@ -3,21 +3,33 @@
 declare(strict_types=1);
 
 use App\Domain\Grid\Grid;
+use App\Domain\Shared\Name;
 use App\Domain\Store\GridNotMapped;
+use App\Domain\Store\Store;
 use App\Domain\Store\StoreGridRepository;
 use App\Domain\Store\StoreId;
-use App\Infrastructure\Storage\FilesystemStoreGridRepository;
-use Illuminate\Support\Facades\Storage;
+use App\Infrastructure\Persistence\EloquentStoreGridRepository;
+use Database\Seeders\StoreWriter;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\Domain\InMemoryStoreGridRepository;
 use Tests\Support\GridDrawing;
+use Tests\Support\StoreLayout;
+
+uses(RefreshDatabase::class);
 
 /*
- * The contract every StoreGridRepository keeps. The in-memory adapter is the reference; the
- * filesystem adapter is the production one.
+ * The contract every StoreGridRepository keeps, given stores 1 and 2. The in-memory adapter is the
+ * reference; the Eloquent adapter runs it on MySQL.
  */
 dataset('store grid repositories', [
     'in memory' => fn (): StoreGridRepository => new InMemoryStoreGridRepository,
-    'filesystem' => fn (): StoreGridRepository => new FilesystemStoreGridRepository(Storage::fake('local')),
+    'eloquent' => function (): StoreGridRepository {
+        $writer = new StoreWriter;
+        $writer->store(new Store(new StoreId(1), Name::from('Downtown'), [StoreLayout::entrance(1)], []));
+        $writer->store(new Store(new StoreId(2), Name::from('Harbour'), [StoreLayout::entrance(2)], []));
+
+        return new EloquentStoreGridRepository;
+    },
 ]);
 
 it('gives back the grid saved for a store', function (StoreGridRepository $grids): void {
@@ -47,28 +59,6 @@ it('replaces the grid of a store mapped again', function (StoreGridRepository $g
 })->with('store grid repositories');
 
 it('reports a store whose floor plan has not been mapped', function (StoreGridRepository $grids): void {
-    expect(fn (): Grid => $grids->forStore(new StoreId(3)))
-        ->toThrow(GridNotMapped::class, 'The floor plan of store 3 has not been mapped yet.');
+    expect(fn (): Grid => $grids->forStore(new StoreId(2)))
+        ->toThrow(GridNotMapped::class, 'The floor plan of store 2 has not been mapped yet.');
 })->with('store grid repositories');
-
-it('writes a grid as rows of cell codes under the store id', function (): void {
-    $disk = Storage::fake('local');
-
-    new FilesystemStoreGridRepository($disk)->save(new StoreId(7), GridDrawing::grid(['#oSP', '..##']));
-
-    expect($disk->get('stores/7/grid.json'))->toBe('{"rows":["1423","0011"]}');
-});
-
-it('refuses a grid file it did not write', function (string $contents): void {
-    $disk = Storage::fake('local');
-    $disk->put('stores/1/grid.json', $contents);
-
-    expect(fn (): Grid => new FilesystemStoreGridRepository($disk)->forStore(new StoreId(1)))
-        ->toThrow(UnexpectedValueException::class, 'A grid file holds {"rows": [...]}, one string of cell codes per row.');
-})->with([
-    'not an object' => ['[1, 2]'],
-    'rows missing' => ['{"cells": []}'],
-    'rows not a list' => ['{"rows": {"a": "11"}}'],
-    'a row that is not a string' => ['{"rows": [11]}'],
-    'a row with letters' => ['{"rows": ["1x1"]}'],
-]);

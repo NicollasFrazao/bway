@@ -11,16 +11,19 @@ use App\Domain\Routing\ManhattanDistance;
 use App\Domain\Routing\Route;
 use App\Domain\Store\SectorId;
 use App\Domain\Store\StoreId;
-use App\Domain\Store\StoreRepository;
-use Illuminate\Support\Facades\Storage;
-use Tests\Support\Domain\InMemoryStoreRepository;
+use Database\Seeders\StoreWriter;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\V1StoreOne;
+
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 
 /*
  * Golden tests: the PHP mapping and routing against what v1 computed for store 1 and committed at
  * the `v1` tag (tests/Fixtures/v1/store-1/). Every difference is listed here with its cause, and
  * any other difference fails. The decisions are in docs/adr/0003-floor-plan-mapping-and-routing.md.
  */
+uses(RefreshDatabase::class);
 
 /**
  * The ordered pairs where v2 deliberately does not return the route v1 stored, and why.
@@ -178,20 +181,19 @@ it('finds a route as short as v1 from sector 2 to sector 5, where v1 stored cell
         ->and(count(V1StoreOne::route(2, 5)) - 1)->toBe(389);
 });
 
-it('maps the plan and serves the routes of store 1 through the use cases, keeping both on disk', function (): void {
-    $disk = Storage::fake('local');
-    app()->instance(StoreRepository::class, new InMemoryStoreRepository(V1StoreOne::store()));
+it('maps the plan and serves the routes of store 1 through the use cases, keeping both in MySQL', function (): void {
+    new StoreWriter()->store(V1StoreOne::store());
 
     app(MapFloorPlan::class)->handle(new StoreId(1), V1StoreOne::floorPlan());
     $found = app(FindRouteBetweenSectors::class)->handle(new StoreId(1), new SectorId(3), new SectorId(6));
     $kept = app(FindRouteBetweenSectors::class)->handle(new StoreId(1), new SectorId(3), new SectorId(6));
 
     expect(pairs($found->cells))->toBe(pairs(V1StoreOne::route(3, 6)))
-        ->and($kept)->toEqual($found)
-        ->and($disk->exists('stores/1/grid.json'))->toBeTrue()
-        ->and($disk->exists('stores/1/routes/3-6.json'))->toBeTrue();
+        ->and($kept)->toEqual($found);
+    assertDatabaseHas('store_grids', ['store_id' => 1, 'width' => 478, 'height' => 492]);
+    assertDatabaseHas('routes', ['store_id' => 1, 'from_sector_id' => 3, 'to_sector_id' => 6]);
 
     app(MapFloorPlan::class)->handle(new StoreId(1), V1StoreOne::floorPlan());
 
-    expect($disk->exists('stores/1/routes/3-6.json'))->toBeFalse();
+    assertDatabaseMissing('routes', ['store_id' => 1]);
 });
