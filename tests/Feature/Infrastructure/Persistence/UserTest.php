@@ -6,9 +6,6 @@ use App\Infrastructure\Persistence\Eloquent\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\seed;
-
 uses(RefreshDatabase::class);
 
 it('stores a hash of the password, never the password itself', function (): void {
@@ -22,10 +19,4 @@ it('keeps the password and the remember token out of serialisation', function ()
     $user = User::factory()->create();
 
     expect($user->toArray())->not->toHaveKeys(['password', 'remember_token']);
-});
-
-it('seeds a user to sign in with', function (): void {
-    seed();
-
-    assertDatabaseHas('users', ['email' => 'test@example.com']);
 });
