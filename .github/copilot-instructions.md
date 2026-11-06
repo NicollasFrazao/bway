@@ -37,7 +37,7 @@ Two more readings, each with the moment it applies:
 | [Security](/.context/docs/security.md) | What v1 got wrong, what v2 guarantees, how to report a vulnerability |
 | [Tooling](/.context/docs/tooling.md) | Every Composer and npm script, hook and CI job, and what each one catches |
 | [Technical debt](/.context/docs/tech-debt.md) | Known gaps, with the reason they are still open |
-| [Decision records](/docs/adr/README.md) | Why the code is layered this way |
+| [Decision records](/docs/adr/README.md) | Why the code is layered this way, and the choices behind the domain model |
 
 ## Agents and skills
 
