@@ -52,15 +52,18 @@ Checked by `composer check:architecture` (Deptrac, `deptrac.yaml`, run with `--f
 | Domain exception | `app/Domain/<Context>/` | `DuplicateListItem`, `StoreWithoutEntrance` |
 | Use case and its input/output DTOs | `app/Application/<Context>/` | `AddProductToList`, `PlanVisit` |
 | Eloquent model, repository implementation | `app/Infrastructure/Persistence/` | `EloquentShoppingListRepository` |
-| Floor-plan image reader | `app/Infrastructure/` | a GD-based reader behind the mapper's interface |
+| Floor-plan image decoder | `app/Infrastructure/FloorPlan/` | `GdFloorPlanDecoder`, behind the `FloorPlanDecoder` port |
+| File-backed adapter of a port | `app/Infrastructure/Storage/` | `FilesystemRouteCache`, on a Laravel disk |
 | Controller, form request, resource | `app/Http/` | `ShoppingListController` |
 | Binding of an interface to its implementation | `app/Providers/AppServiceProvider.php` | |
 
 `<Context>` is a folder per part of the domain, created when its first class arrives: `Shared`
-(identifiers, `Name`, the `DomainError` base), `Catalog`, `ShoppingList`, `Store`, `Grid`, and later
-`Routing` and `Visit`. A context may use `Shared` and the contexts it builds on (`ShoppingList` uses
-`Catalog`, `Store` uses `Grid`); the choices behind the model are in
-[ADR 0002](/docs/adr/0002-domain-model.md).
+(identifiers, `Name`, the `DomainError` base), `Catalog`, `ShoppingList`, `Store`, `Grid`,
+`FloorPlan`, `Routing`, and later `Visit`. A context may use `Shared` and the contexts it builds on
+(`ShoppingList` uses `Catalog`; `Store` and `FloorPlan` use `Grid`; `Routing` uses `Grid` and
+`Store`); `Grid` uses only `Shared`. The choices behind the model are in
+[ADR 0002](/docs/adr/0002-domain-model.md) and, for mapping and routing,
+[ADR 0003](/docs/adr/0003-floor-plan-mapping-and-routing.md).
 
 ### Design rules inside the layers
 
@@ -78,14 +81,26 @@ Checked by `composer check:architecture` (Deptrac, `deptrac.yaml`, run with `--f
 - `app/Domain/` — the domain model of B1 (#4): `Catalog` (`Product`, `ProductName`, the
   `ProductCatalog` port), `ShoppingList` (the `ShoppingList` aggregate, `ListItem`, the
   `ShoppingListRepository` port), `Store` (the `Store` aggregate, `Sector`, `SectorKind`, `Partition`,
-  the `StoreRepository` port), `Grid` (`GridCoordinate`, `GridArea`) and `Shared`. No port has a
-  production adapter yet: the in-memory adapters in `tests/Support/Domain/` serve the contract
-  tests until B4 (#7).
+  the `StoreRepository` port), `Grid` (`GridCoordinate`, `GridArea`) and `Shared`. B2 (#5) added
+  `Grid` (the `Grid` value object and `CellKind`), `FloorPlan` (`FloorPlanMapper`, the
+  `ColorClassifier` strategy and its `LegendColorClassifier`, the `FloorPlanDecoder` port),
+  `Routing` (`Route`, the `Pathfinder` interface and `AStarPathfinder` with its `Heuristic`, the
+  `RouteCache` port) and, in `Store`, the `StoreGridRepository` port and the layout checks. The B1
+  ports have no production adapter yet: the in-memory adapters in `tests/Support/Domain/` serve the
+  contract tests until B4 (#7).
+- `app/Application/` — the use cases of B2: `FloorPlan\MapFloorPlan` (map a store's plan, keep the
+  grid, forget the store's routes) and `Routing\FindRouteBetweenSectors` (centre to centre, cached
+  per ordered pair). Nothing calls them yet: their callers are B3's visit and B7's store creation.
+- `app/Infrastructure/FloorPlan/` — `GdFloorPlanDecoder` and `GdFloorPlanImage` (GD).
+- `app/Infrastructure/Storage/` — `FilesystemStoreGridRepository` and `FilesystemRouteCache`, which
+  keep `stores/<id>/grid.json` and `stores/<id>/routes/<from>-<to>.json` on the `local` disk.
 - `app/Infrastructure/Persistence/Eloquent/User.php` — the skeleton's user model, moved out of
   `app/Models` so Eloquent stays in Infrastructure. Accounts are redesigned in B5 (#8).
 - `app/Console/` — `ContextSurfaces` and the two `context:*` commands (see
   [tooling.md](tooling.md)).
-- `app/Providers/AppServiceProvider.php` — empty composition root.
+- `app/Providers/AppServiceProvider.php` — the composition root: binds the B2 ports
+  (`ColorClassifier`, `FloorPlanDecoder`, `Heuristic`, `Pathfinder`, `StoreGridRepository`,
+  `RouteCache`) to their adapters.
 - `routes/web.php` — the welcome page; `/up` is Laravel's health route, used by the container's
   health check.
 

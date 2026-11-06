@@ -49,15 +49,38 @@ as a service in the CI job), because the queries and constraints are MySQL's.
   reference; every production adapter joins the dataset (B4 moves the contract to a suite that can
   reach MySQL). Hand-made domain objects come from small builders such as
   `tests/Support/StoreLayout.php`.
+- Grids and floor plans are drawn as text: `tests/Support/GridDrawing.php` (`#` wall, `o` walkway,
+  `A` and `B` the start and the target, routes traced back with `*`), `DrawnFloorPlan.php` and
+  `TextFloorPlanDecoder.php` (pixels in the legend's colours), `CornerShop.php` (a store small
+  enough to draw).
 - Literal numbers and strings are fine in tests: they are the readable form of a case. Tests are
   exempt from the magic-number check, not from PHPStan or PHP_CodeSniffer.
+
+## Golden tests (v1 fixtures)
+
+`tests/Fixtures/v1/store-1/` holds, verbatim from the `v1` tag, the floor plan of store 1
+(`plantas/estabelecimento.jpg`), the grid v1 mapped from it (`mapeamentos/1.json`) and the 36 routes
+v1 stored (`rotas/1-<from>-<to>.json`). `tests/Support/V1StoreOne.php` reads them, undoing v1's route
+format (target first, target twice, start missing). `tests/Feature/Golden/StoreOneTest.php` maps the
+JPEG with GD and asserts:
+
+- the grid equals v1's on every cell outside row and column 477, where v1 slipped (both checked
+  separately);
+- each of v1's routes starts and ends at the centres of its sectors, which proves the sector ids;
+- 25 routes equal v1's cell for cell; the other five are named in `V1_ROUTE_DIFFERENCES`, each with
+  its own assertion (three shorter than v1's, one as short along other cells, one stored by v1 from
+  an earlier plan);
+- the use cases map the plan, cache a route on disk and forget it on a new mapping.
+
+A difference not listed there fails. [ADR 0003](/docs/adr/0003-floor-plan-mapping-and-routing.md)
+records why each listed one is accepted.
 
 ## What each phase must test
 
 | Phase | Tests |
 | --- | --- |
 | B1 domain | Every invariant: no duplicate product in a list, acquiring removes an item, exactly one entrance per store; every domain exception |
-| B2 routing | Golden tests: the mapping and routes of store 1 committed in `v1` (`storage/app/public/estabelecimentos/`) are fixtures, and the PHP output must match; unreachable target, start equals target, walls and partitions block movement |
+| B2 routing | Golden tests against the mapping and routes of store 1 committed in `v1` (see above); unreachable target, start equals target, walls and partitions block movement; the contracts of `StoreGridRepository` and `RouteCache` against their in-memory and filesystem adapters |
 | B3 visit | Deterministic order on small hand-made grids; products not sold in the store are reported |
 | B4 persistence | Each repository against MySQL; the seeded store supports the whole flow |
 | B5 accounts | Access to another user's list is denied; rate limiting; CSRF |
@@ -65,8 +88,10 @@ as a service in the CI job), because the queries and constraints are MySQL's.
 
 ## Today
 
-102 tests (datasets counted one per case): the welcome page and the health route, the `context:*`
-commands and their classes, the user model (password hashing, hidden attributes, the seeder), and the
-B1 domain in `tests/Unit/Domain/` — every invariant of the shopping list and the store, the value
-objects, every domain exception, and the contracts of the three ports against their in-memory
-adapters. They cover 100% of the lines of `app/`.
+330 tests (datasets counted one per case): the welcome page and the health route, the `context:*`
+commands and their classes, the user model (password hashing, hidden attributes, the seeder), the
+domain in `tests/Unit/Domain/` — every invariant of the shopping list and the store (layout overlap
+and fit included), the value objects, the legend, the mapper, the A* search on drawn grids, every
+domain exception, and the contracts of the B1 ports against their in-memory adapters — the B2 use
+cases in `tests/Unit/Application/`, the GD decoder, the filesystem adapters (by contract), the
+composition root, and the golden tests of store 1. They cover 100% of the lines of `app/`.
