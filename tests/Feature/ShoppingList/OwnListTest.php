@@ -7,6 +7,7 @@ use App\Domain\ShoppingList\ListItem;
 use App\Domain\ShoppingList\ShoppingListRepository;
 use App\Infrastructure\Persistence\Eloquent\ProductRecord;
 use App\Infrastructure\Persistence\Eloquent\User;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\EnforcedRequestForgery;
@@ -145,7 +146,7 @@ it('searches the catalogue from the list page', function (): void {
 });
 
 it('refuses a change to the list sent without the form token', function (): void {
-    instance(PreventRequestForgery::class, new EnforcedRequestForgery(app(), app('encrypter')));
+    instance(PreventRequestForgery::class, new EnforcedRequestForgery(app(), app(Encrypter::class)));
     $ana = User::factory()->create();
 
     actingAs($ana)->post('/list/items', ['product_id' => 1])->assertStatus(419);
