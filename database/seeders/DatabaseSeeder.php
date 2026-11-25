@@ -10,7 +10,7 @@ use Illuminate\Database\Seeder;
 
 /**
  * Seeds a fresh database so the whole flow works: the catalogue, store 1 with its layout, assortment
- * and mapped floor plan, and a demo user with a shopping list.
+ * and mapped floor plan, a demo user with a shopping list and a demo administrator.
  *
  * The app container runs it on every start (`migrate --seed`), so it does nothing once store 1 exists.
  */
@@ -29,6 +29,6 @@ final class DatabaseSeeder extends Seeder
             return;
         }
 
-        $this->call([ProductCatalogSeeder::class, StoreOneSeeder::class, DemoShopperSeeder::class]);
+        $this->call([ProductCatalogSeeder::class, StoreOneSeeder::class, DemoShopperSeeder::class, DemoAdministratorSeeder::class]);
     }
 }
