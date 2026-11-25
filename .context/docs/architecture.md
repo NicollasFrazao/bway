@@ -100,7 +100,8 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
   grid, forget the store's routes) and `Routing\FindRouteBetweenSectors` (centre to centre, cached
   per ordered pair); and of B3: `Visit\PlanVisit` (the visit of a store for a user's list) and
   `Routing\RouteLengthsBetweenSectors`, the adapter of the `RouteLengths` port that measures through
-  `FindRouteBetweenSectors`. No controller calls them yet (B6, #9; B7, #10). B5 (#8) added
+  `FindRouteBetweenSectors`. B6 (#9) added `Visit\MapVisit` (the visit with each walk kept to its
+  corners, for the map) and `ShoppingList\AcquireItem`; the visit pages call them. B5 (#8) added
   `Account\RegisterAccount`, `SignIn`, `ResetPassword` and `AuthoriseStoreManagement`;
   `ShoppingList\ShowShoppingList`, `AddProductToList`, `RemoveProductFromList`, `ClearShoppingList`
   and `SearchProducts`; and `Store\ListStores`.
@@ -133,8 +134,8 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
   neighbour). Separate providers keep each within PHPMD's coupling limit.
 - `database/seeders/` — the demo data: the catalogue, store 1 with its layout, assortment and mapped
   floor plan, a demo user with a list and a demo administrator.
-- `routes/web.php` — the welcome page; the guest pages (sign-up, sign-in, recovery); the list routes
-  behind `auth`, none of which takes a user id; `admin/` behind `can:manage-stores`. `/up` is
+- `routes/web.php` — the home page; the guest pages (sign-up, sign-in, recovery); the list, store
+  choice, visit and map routes behind `auth`, none of which takes a user id; `admin/` behind `can:manage-stores`. `/up` is
   Laravel's health route, used by the container's health check.
 
 ## Runtime

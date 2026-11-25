@@ -6,13 +6,21 @@ use App\Http\Controllers\Account\NewPasswordController;
 use App\Http\Controllers\Account\PasswordResetLinkController;
 use App\Http\Controllers\Account\RegistrationController;
 use App\Http\Controllers\Account\SessionController;
+use App\Http\Controllers\AcquiredItemController;
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\ShoppingListController;
 use App\Http\Controllers\ShoppingListItemController;
+use App\Http\Controllers\StoreSelectionController;
+use App\Http\Controllers\VisitController;
+use App\Http\Controllers\VisitMapController;
 use App\Providers\AccountServiceProvider;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+// An id in a URL is a positive integer, so the identifiers of the domain accept it.
+Route::pattern('store', '[1-9][0-9]{0,18}');
+Route::pattern('product', '[1-9][0-9]{0,18}');
+
+Route::view('/', 'home')->name('home');
 
 // Accounts (B5): sign-up, sign-in and password recovery, for guests only.
 Route::middleware('guest')->group(static function (): void {
@@ -37,8 +45,14 @@ Route::middleware('auth')->group(static function (): void {
     Route::delete('/list', [ShoppingListController::class, 'clear'])->name('shopping-list.clear');
     Route::post('/list/items', [ShoppingListItemController::class, 'store'])->name('shopping-list.items.store');
     Route::delete('/list/items/{product}', [ShoppingListItemController::class, 'destroy'])
-        ->whereNumber('product')
         ->name('shopping-list.items.destroy');
+
+    // B6: choose a store, follow the visit, see it on the map.
+    Route::get('/stores', [StoreSelectionController::class, 'index'])->name('stores');
+    Route::get('/stores/{store}/visit', [VisitController::class, 'show'])->name('visit');
+    Route::get('/stores/{store}/map', [VisitMapController::class, 'show'])->name('visit.map');
+    Route::post('/stores/{store}/visit/items/{product}', [AcquiredItemController::class, 'store'])
+        ->name('visit.acquire');
 });
 
 // Store management, for administrators only.

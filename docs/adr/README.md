@@ -11,3 +11,4 @@ decided, what else was considered, and what it costs. A superseded record stays,
 | [0004](0004-visit-planning.md) | Visit planning: one sector per product, lengths measured up front, nearest neighbour improved by 2-opt | Accepted |
 | [0005](0005-persistence.md) | Persistence: Eloquent adapters behind the domain ports, constraints that repeat the domain, grids and routes in MySQL | Accepted |
 | [0006](0006-accounts-and-authorisation.md) | Accounts and authorisation: the account in the domain, the owner from the session, a gate for store management | Accepted |
+| [0007](0007-web-interface.md) | Web interface: server-rendered Blade pages, the map drawn as SVG from the store's layout and its routes | Accepted |

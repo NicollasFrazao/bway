@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\ShoppingList\AcquireItem;
 use App\Application\ShoppingList\AddProductToList;
 use App\Application\ShoppingList\ClearShoppingList;
 use App\Application\ShoppingList\RemoveProductFromList;
@@ -97,4 +98,17 @@ it('searches the catalogue, and finds nothing for a blank term', function (): vo
 
     expect(array_map(static fn (Product $product): string => $product->name->value, $search->handle(' ba ')))->toBe(['Bananas'])
         ->and($search->handle('   '))->toBe([]);
+});
+
+it('acquires an item: it leaves the owner\'s list and is given back', function (): void {
+    $lists = new InMemoryShoppingListRepository;
+    $add = new AddProductToList($lists, pantry());
+    $add->handle(new UserId(4), new ProductId(1));
+    $add->handle(new UserId(4), new ProductId(2));
+
+    $item = new AcquireItem($lists)->handle(new UserId(4), new ProductId(1));
+
+    expect($item->productName->value)->toBe('rice')
+        ->and(shownNames($lists, 4))->toBe(['Beans'])
+        ->and(static fn (): ListItem => new AcquireItem($lists)->handle(new UserId(4), new ProductId(1)))->toThrow(ProductNotInList::class);
 });
