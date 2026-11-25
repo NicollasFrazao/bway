@@ -15,8 +15,9 @@ use Illuminate\Notifications\Notifiable;
 /**
  * Account that signs in to the app; the Eloquent model behind Laravel's session guard.
  *
- * It lives in Infrastructure because it is a persistence detail: the domain will get its own
- * account concepts when accounts are rebuilt (issue #8), and this model will map to them.
+ * It lives in Infrastructure because it is a persistence detail: the account repository maps it
+ * to the domain's account. The `role` column is never mass-assigned: only the repository and the
+ * seeders write it.
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]

@@ -30,7 +30,8 @@ make install     # Composer and npm dependencies, and the git hooks
 app key and runs the migrations and the seeders (`migrate --seed`) before starting the server.
 
 The seed is the demo data: the product catalogue, store 1 with its layout, assortment and mapped
-floor plan, and the user `test@example.com` (password `password`) with a shopping list. It runs on
+floor plan, the user `test@example.com` (password `password`) with a shopping list, and the
+administrator `admin@example.com` (password `password`), who may open `/admin/stores`. It runs on
 every start and does nothing once store 1 exists ("Store 1 exists already; nothing seeded.").
 
 Ports: `APP_PORT` (default 8000) for the app and `FORWARD_DB_PORT` (default 33060) for MySQL

@@ -17,7 +17,10 @@ Use the English term in code, tests, logs and docs, with this meaning. The v1 co
 
 | Term | Meaning | v1 (Portuguese) |
 | --- | --- | --- |
-| **user** | A person with an account who keeps a shopping list. | `Usuario`, `tb_usuario` |
+| **user** | A person with an account who keeps a shopping list; identified by a `UserId`. | `Usuario`, `tb_usuario` |
+| **account** | A user as the app knows them: name, credentials and role (`Account`). | `Usuario` |
+| **credentials** | An account's email address and the hash of its password (`Credentials`). | `nm_email`, `cd_senha` (plain text) |
+| **role** | What an account may do (`Role`): a **shopper** keeps a list; an **administrator** also manages the stores (the `manage-stores` gate). | — |
 | **product** | An item of the catalogue, known by its name (`ProductName`) and identified by its `ProductId`. | `Produto`, `tb_produto` |
 | **catalogue** | Every product a user can add to a list (`ProductCatalog` is its repository). | — |
 | **shopping list** | The products a user intends to buy; no product appears twice (`DuplicateListItem`). Aggregate root; a user has one, identified by its owner. | `ListaCompras`, `tb_lista_compras` |
