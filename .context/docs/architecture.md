@@ -135,8 +135,8 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
 - `database/seeders/` — the demo data: the catalogue, store 1 with its layout, assortment and mapped
   floor plan, a demo user with a list and a demo administrator.
 - `routes/web.php` — the home page; the guest pages (sign-up, sign-in, recovery); the list, store
-  choice, visit and map routes behind `auth`, none of which takes a user id; `admin/` behind `can:manage-stores`. `/up` is
-  Laravel's health route, used by the container's health check.
+  choice, visit and map routes behind `auth`, none of which takes a user id; `admin/` behind
+  `can:manage-stores`. `/up` is Laravel's health route, used by the container's health check.
 
 ## Runtime
 
