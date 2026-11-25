@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\FloorPlan\MapFloorPlan;
+use App\Application\FloorPlan\StoreGridWriter;
 use App\Application\Routing\FindRouteBetweenSectors;
 use App\Application\Routing\RouteLengthsBetweenSectors;
 use App\Application\Visit\MapVisit;
@@ -30,6 +31,7 @@ use App\Domain\Visit\NearestNeighbourOrdering;
 use App\Domain\Visit\TwoOptOrdering;
 use App\Domain\Visit\VisitPlanner;
 use Tests\Support\AisleShop;
+use Tests\Support\Domain\ImmediateTransaction;
 use Tests\Support\Domain\InMemoryAssortmentRepository;
 use Tests\Support\Domain\InMemoryRouteCache;
 use Tests\Support\Domain\InMemoryShoppingListRepository;
@@ -49,7 +51,7 @@ function visitMapOf(Store $store, ?string $floorPlan, Assortment $assortment, Sh
     $lists->save($list);
 
     if ($floorPlan !== null) {
-        new MapFloorPlan($stores, new FloorPlanMapper(new LegendColorClassifier, new TextFloorPlanDecoder), $grids, $routes)
+        new MapFloorPlan($stores, new FloorPlanMapper(new LegendColorClassifier, new TextFloorPlanDecoder), new StoreGridWriter($grids, $routes, new ImmediateTransaction))
             ->handle($store->id, $floorPlan);
     }
 

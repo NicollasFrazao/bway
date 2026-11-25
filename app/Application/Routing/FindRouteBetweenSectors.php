@@ -18,7 +18,8 @@ use App\Domain\Store\StoreRepository;
 
 /**
  * The route from the centre of one sector of a store to the centre of another, found once per
- * ordered pair and then served from the cache (use case).
+ * ordered pair and then served from the cache, which also remembers the pairs found to have none
+ * (use case).
  */
 final readonly class FindRouteBetweenSectors
 {
@@ -49,6 +50,10 @@ final readonly class FindRouteBetweenSectors
 
         if ($kept instanceof Route) {
             return $kept;
+        }
+
+        if ($this->routes->isUnreachable($storeId, $from, $to)) {
+            throw RouteNotFound::between($origin->area->center(), $destination->area->center());
         }
 
         $route = $this->pathfinder->find(

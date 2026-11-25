@@ -56,7 +56,7 @@ Checked by `composer check:architecture` (Deptrac, `deptrac.yaml`, run with `--f
 | Eloquent model, named `*Record` (the framework's `User` aside: the guard and the password broker read it) | `app/Infrastructure/Persistence/Eloquent/` | `StoreRecord`, `SectorRecord` |
 | Floor-plan image decoder | `app/Infrastructure/FloorPlan/` | `GdFloorPlanDecoder`, behind the `FloorPlanDecoder` port |
 | Controller, form request, resource | `app/Http/` | `ShoppingListController`, `SessionController` |
-| Binding of an interface to its implementation | `app/Providers/` (`AccountServiceProvider`, `AppServiceProvider`, `PersistenceServiceProvider`, `VisitServiceProvider`) | |
+| Binding of an interface to its implementation | `app/Providers/` (`AccountServiceProvider`, `AppServiceProvider`, `PersistenceServiceProvider`, `StoreManagementServiceProvider`, `VisitServiceProvider`) | |
 
 `<Context>` is a folder per part of the domain, created when its first class arrives: `Shared`
 (identifiers, `Name`, the `DomainError` base), `Account`, `Catalog`, `ShoppingList`, `Store`, `Grid`,
@@ -100,7 +100,10 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
   grid, forget the store's routes) and `Routing\FindRouteBetweenSectors` (centre to centre, cached
   per ordered pair); and of B3: `Visit\PlanVisit` (the visit of a store for a user's list) and
   `Routing\RouteLengthsBetweenSectors`, the adapter of the `RouteLengths` port that measures through
-  `FindRouteBetweenSectors`. B6 (#9) added `Visit\MapVisit` (the visit with each walk kept to its
+  `FindRouteBetweenSectors`. B7 (#10) added `Store\CreateStore`, `EditSectors`, `EditPartitions`
+  (through `LayoutWriter`), `EditAssortment`, `ShowStoreLayout`, `ShowStoreGrid`,
+  `FloorPlan\StoreGridWriter`, and `Routing\GenerateStoreRoutes` and `TrackRouteGeneration`
+  ([ADR 0008](/docs/adr/0008-store-management.md)). B6 (#9) added `Visit\MapVisit` (the visit with each walk kept to its
   corners, for the map) and `ShoppingList\AcquireItem`; the visit pages call them. B5 (#8) added
   `Account\RegisterAccount`, `SignIn`, `ResetPassword` and `AuthoriseStoreManagement`;
   `ShoppingList\ShowShoppingList`, `AddProductToList`, `RemoveProductFromList`, `ClearShoppingList`

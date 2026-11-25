@@ -42,6 +42,9 @@ The tests use a second database on the same server, `bway_testing`, which MySQL 
 volume is new (`docker/mysql/initdb/`). A volume created before B4 (#7) does not have it: run
 `docker compose down -v` once, then `make up`.
 
+A third service, `queue`, runs `php artisan queue:work`: it finds a store's routes when store
+management asks for them (B7). It starts once the app is healthy.
+
 ## Day to day
 
 | Command | What it does |

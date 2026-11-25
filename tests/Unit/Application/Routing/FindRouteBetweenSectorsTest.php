@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\FloorPlan\MapFloorPlan;
+use App\Application\FloorPlan\StoreGridWriter;
 use App\Application\Routing\FindRouteBetweenSectors;
 use App\Domain\FloorPlan\FloorPlanMapper;
 use App\Domain\FloorPlan\LegendColorClassifier;
@@ -16,6 +17,7 @@ use App\Domain\Store\SectorId;
 use App\Domain\Store\SectorNotInStore;
 use App\Domain\Store\StoreId;
 use Tests\Support\CornerShop;
+use Tests\Support\Domain\ImmediateTransaction;
 use Tests\Support\Domain\InMemoryRouteCache;
 use Tests\Support\Domain\InMemoryStoreGridRepository;
 use Tests\Support\Domain\InMemoryStoreRepository;
@@ -34,7 +36,7 @@ function cornerShopRouting(bool $mapped = true): array
     $routes = new InMemoryRouteCache;
 
     if ($mapped) {
-        new MapFloorPlan($stores, new FloorPlanMapper(new LegendColorClassifier, new TextFloorPlanDecoder), $grids, $routes)
+        new MapFloorPlan($stores, new FloorPlanMapper(new LegendColorClassifier, new TextFloorPlanDecoder), new StoreGridWriter($grids, $routes, new ImmediateTransaction))
             ->handle(new StoreId(1), CornerShop::floorPlan());
     }
 

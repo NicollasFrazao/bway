@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Grid;
 
-use App\Domain\Shared\DomainError;
-
 /**
  * A grid coordinate was given a negative x or y; the grid starts at (0, 0).
  */
-final class NegativeCoordinate extends DomainError
+final class NegativeCoordinate extends InvalidGridArea
 {
     /**
      * Builds the error for the refused pair.

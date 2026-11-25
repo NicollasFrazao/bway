@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Grid;
 
-use App\Domain\Shared\DomainError;
-
 /**
  * A grid area was given a size that covers no cell.
  */
-final class EmptyGridArea extends DomainError
+final class EmptyGridArea extends InvalidGridArea
 {
     /**
      * Builds the error for the refused size.

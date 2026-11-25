@@ -13,6 +13,7 @@ use App\Domain\Store\StoreId;
 use App\Infrastructure\Persistence\Eloquent\ProductRecord;
 use App\Infrastructure\Persistence\EloquentAssortmentRepository;
 use Database\Seeders\StoreWriter;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\Domain\InMemoryAssortmentRepository;
 use Tests\Support\StoreLayout;
@@ -47,7 +48,7 @@ dataset('assortment repositories', [
         ProductRecord::query()->forceCreate(['id' => 8, 'name' => 'Milk']);
         $writer->assortment(new StoreId(1), ...storeOneSells());
 
-        return new EloquentAssortmentRepository;
+        return new EloquentAssortmentRepository(app(ConnectionInterface::class));
     },
 ]);
 
@@ -65,4 +66,17 @@ it('gives an empty assortment to a store with nothing recorded', function (Assor
 
     expect($assortment->storeId)->toEqual(new StoreId(2))
         ->and($assortment->sectorSelling(new ProductId(7)))->toBeNull();
+})->with('assortment repositories');
+
+it('replaces the assortment of a store, and leaves the others', function (AssortmentRepository $repository): void {
+    $repository->save(new Assortment(new StoreId(1), new SectorProduct(new SectorId(3), new ProductId(7))));
+
+    $assortment = $repository->forStore(new StoreId(1));
+    expect($assortment->sectorSelling(new ProductId(7)))->toEqual(new SectorId(3))
+        ->and($assortment->sectorSelling(new ProductId(8)))->toBeNull()
+        ->and($assortment->sectorProducts())->toHaveCount(1);
+
+    $repository->save(new Assortment(new StoreId(1)));
+
+    expect($repository->forStore(new StoreId(1))->sectorProducts())->toBe([]);
 })->with('assortment repositories');

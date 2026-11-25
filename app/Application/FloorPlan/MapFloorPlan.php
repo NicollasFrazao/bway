@@ -8,9 +8,7 @@ use App\Domain\FloorPlan\FloorPlanMapper;
 use App\Domain\FloorPlan\UnreadableFloorPlan;
 use App\Domain\FloorPlan\WallFrameNotFound;
 use App\Domain\Grid\Grid;
-use App\Domain\Routing\RouteCache;
-use App\Domain\Store\LayoutOutsideGrid;
-use App\Domain\Store\StoreGridRepository;
+use App\Domain\Store\LayoutRefused;
 use App\Domain\Store\StoreId;
 use App\Domain\Store\StoreNotFound;
 use App\Domain\Store\StoreRepository;
@@ -23,13 +21,13 @@ use App\Domain\Store\StoreRepository;
 final readonly class MapFloorPlan
 {
     /**
-     * Takes the store to map, the mapper, and where grids and routes are kept.
+     * Takes the store to map, the mapper, and the writer that keeps the new grid and forgets the old
+     * routes together.
      */
     public function __construct(
         private StoreRepository $stores,
         private FloorPlanMapper $mapper,
-        private StoreGridRepository $grids,
-        private RouteCache $routes,
+        private StoreGridWriter $grids,
     ) {}
 
     /**
@@ -40,7 +38,7 @@ final readonly class MapFloorPlan
      * @throws StoreNotFound when no store has that id.
      * @throws UnreadableFloorPlan when the file is not an image that can be decoded.
      * @throws WallFrameNotFound when the plan has no wall to frame the store.
-     * @throws LayoutOutsideGrid when a sector or partition of the store reaches beyond the grid.
+     * @throws LayoutRefused when a sector or partition of the store reaches beyond the grid.
      */
     public function handle(StoreId $storeId, string $floorPlan): Grid
     {
@@ -48,8 +46,7 @@ final readonly class MapFloorPlan
         $grid = $this->mapper->mapFile($floorPlan);
         $store->ensureFitsInside($grid);
 
-        $this->grids->save($storeId, $grid);
-        $this->routes->forgetStore($storeId);
+        $this->grids->replace($storeId, $grid);
 
         return $grid;
     }

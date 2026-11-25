@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Store;
 
-use App\Domain\Shared\DomainError;
-
 /**
  * Two parts of a store's layout (sectors or partitions) were placed on a shared cell.
  */
-final class OverlappingLayout extends DomainError
+final class OverlappingLayout extends LayoutRefused
 {
     /**
      * Builds the error naming both parts, such as "sector 2" and "partition 4".

@@ -7,7 +7,14 @@ use App\Http\Controllers\Account\PasswordResetLinkController;
 use App\Http\Controllers\Account\RegistrationController;
 use App\Http\Controllers\Account\SessionController;
 use App\Http\Controllers\AcquiredItemController;
+use App\Http\Controllers\Admin\AssortmentController;
+use App\Http\Controllers\Admin\FloorPlanController;
+use App\Http\Controllers\Admin\NewStoreController;
+use App\Http\Controllers\Admin\PartitionController;
+use App\Http\Controllers\Admin\RouteGenerationController;
+use App\Http\Controllers\Admin\SectorController;
 use App\Http\Controllers\Admin\StoreController;
+use App\Http\Controllers\Admin\StoreGridController;
 use App\Http\Controllers\ShoppingListController;
 use App\Http\Controllers\ShoppingListItemController;
 use App\Http\Controllers\StoreSelectionController;
@@ -19,6 +26,8 @@ use Illuminate\Support\Facades\Route;
 // An id in a URL is a positive integer, so the identifiers of the domain accept it.
 Route::pattern('store', '[1-9][0-9]{0,18}');
 Route::pattern('product', '[1-9][0-9]{0,18}');
+Route::pattern('sector', '[1-9][0-9]{0,18}');
+Route::pattern('partition', '[1-9][0-9]{0,18}');
 
 Route::view('/', 'home')->name('home');
 
@@ -60,4 +69,18 @@ Route::middleware(['auth', 'can:'.AccountServiceProvider::MANAGE_STORES])
     ->prefix('admin')
     ->group(static function (): void {
         Route::get('/stores', [StoreController::class, 'index'])->name('admin.stores');
+        Route::get('/stores/create', [NewStoreController::class, 'create'])->name('admin.stores.create');
+        Route::post('/stores', [NewStoreController::class, 'store'])->name('admin.stores.store');
+        Route::get('/stores/{store}', [StoreController::class, 'show'])->name('admin.stores.show');
+        Route::get('/stores/{store}/grid.png', [StoreGridController::class, 'show'])->name('admin.stores.grid');
+        Route::post('/stores/{store}/floor-plan', [FloorPlanController::class, 'update'])->name('admin.stores.floor-plan');
+        Route::post('/stores/{store}/sectors', [SectorController::class, 'store'])->name('admin.stores.sectors.store');
+        Route::put('/stores/{store}/sectors/{sector}', [SectorController::class, 'update'])->name('admin.stores.sectors.update');
+        Route::delete('/stores/{store}/sectors/{sector}', [SectorController::class, 'destroy'])->name('admin.stores.sectors.destroy');
+        Route::post('/stores/{store}/partitions', [PartitionController::class, 'store'])->name('admin.stores.partitions.store');
+        Route::delete('/stores/{store}/partitions/{partition}', [PartitionController::class, 'destroy'])
+            ->name('admin.stores.partitions.destroy');
+        Route::get('/stores/{store}/assortment', [AssortmentController::class, 'edit'])->name('admin.stores.assortment');
+        Route::put('/stores/{store}/assortment', [AssortmentController::class, 'update']);
+        Route::post('/stores/{store}/routes', [RouteGenerationController::class, 'store'])->name('admin.stores.routes');
     });

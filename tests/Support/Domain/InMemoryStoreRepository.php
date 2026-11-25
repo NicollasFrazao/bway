@@ -4,29 +4,38 @@ declare(strict_types=1);
 
 namespace Tests\Support\Domain;
 
+use App\Domain\Grid\GridArea;
+use App\Domain\Shared\Name;
+use App\Domain\Store\Partition;
+use App\Domain\Store\PartitionId;
+use App\Domain\Store\Sector;
+use App\Domain\Store\SectorId;
+use App\Domain\Store\SectorKind;
 use App\Domain\Store\Store;
 use App\Domain\Store\StoreId;
 use App\Domain\Store\StoreNotFound;
 use App\Domain\Store\StoreRepository;
 
 /**
- * Serves a fixed set of stores from memory.
+ * Keeps stores in memory, keyed by id, in the order they were given or added.
  */
-final readonly class InMemoryStoreRepository implements StoreRepository
+final class InMemoryStoreRepository implements StoreRepository
 {
     /**
-     * The stores, in the order given.
+     * The stores, keyed by id.
      *
-     * @var list<Store>
+     * @var array<int, Store>
      */
-    private array $stores;
+    private array $stores = [];
 
     /**
-     * Holds the stores the tests need.
+     * Holds the stores the tests start with.
      */
     public function __construct(Store ...$stores)
     {
-        $this->stores = array_values($stores);
+        foreach ($stores as $store) {
+            $this->stores[$store->id->value] = $store;
+        }
     }
 
     /**
@@ -36,13 +45,7 @@ final readonly class InMemoryStoreRepository implements StoreRepository
      */
     public function get(StoreId $id): Store
     {
-        foreach ($this->stores as $store) {
-            if ($store->id->value === $id->value) {
-                return $store;
-            }
-        }
-
-        throw StoreNotFound::withId($id);
+        return $this->stores[$id->value] ?? throw StoreNotFound::withId($id);
     }
 
     /**
@@ -52,6 +55,62 @@ final readonly class InMemoryStoreRepository implements StoreRepository
      */
     public function all(): array
     {
-        return $this->stores;
+        return array_values($this->stores);
+    }
+
+    /**
+     * Adds a store with its entrance under the next ids.
+     */
+    public function add(Name $name, GridArea $entrance): Store
+    {
+        $store = new Store(
+            new StoreId(count($this->stores) + 1),
+            $name,
+            [new Sector($this->nextSectorId(), Name::from('Entrance'), $entrance, SectorKind::Entrance)],
+            [],
+        );
+
+        return $this->stores[$store->id->value] = $store;
+    }
+
+    /**
+     * Replaces the store kept under its id.
+     *
+     * @throws StoreNotFound when none has it.
+     */
+    public function save(Store $store): void
+    {
+        $this->get($store->id);
+        $this->stores[$store->id->value] = $store;
+    }
+
+    /**
+     * One more than the largest sector id of any store.
+     */
+    public function nextSectorId(): SectorId
+    {
+        $ids = [0];
+
+        foreach ($this->stores as $store) {
+            foreach ($store->sectors() as $sector) {
+                $ids[] = $sector->id->value;
+            }
+        }
+
+        return new SectorId(max($ids) + 1);
+    }
+
+    /**
+     * One more than the largest partition id of any store.
+     */
+    public function nextPartitionId(): PartitionId
+    {
+        $ids = [0];
+
+        foreach ($this->stores as $store) {
+            $ids = [...$ids, ...array_map(static fn (Partition $partition): int => $partition->id->value, $store->partitions())];
+        }
+
+        return new PartitionId(max($ids) + 1);
     }
 }

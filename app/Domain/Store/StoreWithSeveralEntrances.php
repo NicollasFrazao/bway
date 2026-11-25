@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Store;
 
-use App\Domain\Shared\DomainError;
-
 /**
  * A store was assembled with more than one entrance sector, so a visit would not know where to start.
  */
-final class StoreWithSeveralEntrances extends DomainError
+final class StoreWithSeveralEntrances extends LayoutRefused
 {
     /**
      * Builds the error naming every sector marked as the entrance.

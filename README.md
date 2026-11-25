@@ -9,14 +9,15 @@ computed with A* over a mapped floor plan.
 
 ## Status
 
-Phases B0 to B6: a Laravel 13 (PHP 8.4) skeleton on Docker with the full quality gate in CI; the
+Phases B0 to B7: a Laravel 13 (PHP 8.4) skeleton on Docker with the full quality gate in CI; the
 domain — shopping list, stores and their sectors, floor-plan mapping, A* routing and visit
 planning — as plain PHP with its use cases, tested without the framework; and its storage in MySQL
 8.4, seeded on first run with the catalogue, store 1, a demo user (`test@example.com`, password
 `password`) and a demo administrator (`admin@example.com`, password `password`); and accounts:
 sign-up, sign-in with a rate limit, password recovery, each user's own list and store management for
 administrators only; and the pages: choose a store, follow the visit sector by sector ticking items
-off, and the route drawn on the store's layout as SVG.
+off, and the route drawn on the store's layout as SVG; and store management for administrators:
+a store created from its floor plan, its layout and assortment, its routes found on a queue.
 
 ## Running locally
 

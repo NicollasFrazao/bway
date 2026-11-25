@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Shared\UserId;
 use App\Domain\ShoppingList\ShoppingListRepository;
+use App\Infrastructure\Persistence\Eloquent\StoreGridRecord;
 use App\Infrastructure\Persistence\Eloquent\User;
 use Database\Seeders\DemoShopperSeeder;
 use Database\Seeders\StoreWriter;
@@ -81,6 +82,13 @@ it('says when a store\'s plan is not mapped yet, and when it sells nothing on th
 
     actingAs($user)->get('/stores/1/map')->assertOk()->assertSee('The map of this store is not ready yet');
     actingAs($user)->get('/stores/1/visit')->assertOk()->assertSee('Nothing on your list is sold in this store.');
+});
+
+it('says a store whose plan is not mapped cannot be visited, when the list needs its sectors', function (): void {
+    $user = demoShopper();
+    StoreGridRecord::query()->where('store_id', 1)->delete();
+
+    actingAs($user)->get('/stores/1/visit')->assertOk()->assertSee('The map of this store is not ready yet');
 });
 
 it('answers not found for a store that does not exist', function (string $uri): void {
