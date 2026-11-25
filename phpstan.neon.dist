@@ -21,6 +21,16 @@ parameters:
     reportAnyTypeWideningInVarTag: true
     reportUnmatchedIgnoredErrors: true
 
+    ignoreErrors:
+        # Larastan describes every Query\Builder method an Eloquent builder forwards (orderBy,
+        # whereIn, count, delete...) as static: Larastan\Reflection\EloquentBuilderMethodReflection::
+        # isStatic() returns true. strict-rules then reads each call as a dynamic call to a static
+        # method. They are instance methods of the query builder; only this message, on the Eloquent
+        # builder, is ignored.
+        -
+            identifier: staticMethod.dynamicCall
+            message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder<[^>]+>::\w+\(\)\.$#'
+
     # tomasvotruba/cognitive-complexity: the Sonar limit of 15 per method.
     cognitive_complexity:
         function: 15

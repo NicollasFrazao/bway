@@ -4,25 +4,31 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Infrastructure\Persistence\Eloquent\User;
+use App\Infrastructure\Persistence\Eloquent\StoreRecord;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 /**
- * Seeds a local database with a user to sign in with; the store and the catalogue arrive with issue #7.
+ * Seeds a fresh database so the whole flow works: the catalogue, store 1 with its layout, assortment
+ * and mapped floor plan, and a demo user with a shopping list.
+ *
+ * The app container runs it on every start (`migrate --seed`), so it does nothing once store 1 exists.
  */
 final class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
     /**
-     * Creates the user `test@example.com` (password `password`).
+     * Runs the seeders in dependency order, unless the database was seeded already.
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        if (StoreRecord::query()->whereKey(StoreOneLayout::STORE_ID)->exists()) {
+            $this->command?->info('Store 1 exists already; nothing seeded.');
+
+            return;
+        }
+
+        $this->call([ProductCatalogSeeder::class, StoreOneSeeder::class, DemoShopperSeeder::class]);
     }
 }

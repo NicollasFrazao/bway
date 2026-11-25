@@ -52,11 +52,11 @@ Checked by `composer check:architecture` (Deptrac, `deptrac.yaml`, run with `--f
 | Domain exception | `app/Domain/<Context>/` | `DuplicateListItem`, `StoreWithoutEntrance` |
 | Use case and its input/output DTOs | `app/Application/<Context>/` | `AddProductToList`, `PlanVisit` |
 | Application-side adapter of a domain port | `app/Application/<Context>/` | `RouteLengthsBetweenSectors`, behind `RouteLengths` |
-| Eloquent model, repository implementation | `app/Infrastructure/Persistence/` | `EloquentShoppingListRepository` |
+| Repository implementation (Eloquent adapter of a port) | `app/Infrastructure/Persistence/` | `EloquentShoppingListRepository` |
+| Eloquent model, named `*Record` (the skeleton's `User` aside, until B5) | `app/Infrastructure/Persistence/Eloquent/` | `StoreRecord`, `SectorRecord` |
 | Floor-plan image decoder | `app/Infrastructure/FloorPlan/` | `GdFloorPlanDecoder`, behind the `FloorPlanDecoder` port |
-| File-backed adapter of a port | `app/Infrastructure/Storage/` | `FilesystemRouteCache`, on a Laravel disk |
 | Controller, form request, resource | `app/Http/` | `ShoppingListController` |
-| Binding of an interface to its implementation | `app/Providers/` (`AppServiceProvider`, `VisitServiceProvider`) | |
+| Binding of an interface to its implementation | `app/Providers/` (`AppServiceProvider`, `PersistenceServiceProvider`, `VisitServiceProvider`) | |
 
 `<Context>` is a folder per part of the domain, created when its first class arrives: `Shared`
 (identifiers, `Name`, the `DomainError` base), `Catalog`, `ShoppingList`, `Store`, `Grid`,
@@ -65,8 +65,9 @@ Checked by `composer check:architecture` (Deptrac, `deptrac.yaml`, run with `--f
 uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `Store` and `Routing`);
 `Grid` uses only `Shared`. The choices behind the model are in
 [ADR 0002](/docs/adr/0002-domain-model.md), for mapping and routing in
-[ADR 0003](/docs/adr/0003-floor-plan-mapping-and-routing.md), and for the visit in
-[ADR 0004](/docs/adr/0004-visit-planning.md).
+[ADR 0003](/docs/adr/0003-floor-plan-mapping-and-routing.md), for the visit in
+[ADR 0004](/docs/adr/0004-visit-planning.md), and for persistence in
+[ADR 0005](/docs/adr/0005-persistence.md).
 
 ### Design rules inside the layers
 
@@ -88,9 +89,8 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
   `Grid` (the `Grid` value object and `CellKind`), `FloorPlan` (`FloorPlanMapper`, the
   `ColorClassifier` strategy and its `LegendColorClassifier`, the `FloorPlanDecoder` port),
   `Routing` (`Route`, the `Pathfinder` interface and `AStarPathfinder` with its `Heuristic`, the
-  `RouteCache` port) and, in `Store`, the `StoreGridRepository` port and the layout checks. The B1
-  ports have no production adapter yet: the in-memory adapters in `tests/Support/Domain/` serve the
-  contract tests until B4 (#7). B3 (#6) added, in `Store`, the `Assortment` of a store (one
+  `RouteCache` port) and, in `Store`, the `StoreGridRepository` port and the layout checks. B3 (#6)
+  added, in `Store`, the `Assortment` of a store (one
   `SectorProduct` per product, `ProductInSeveralSectors`) and its `AssortmentRepository` port, and
   the `Visit` context: `VisitPlanner`, the `VisitOrderingStrategy` interface with
   `NearestNeighbourOrdering` and `TwoOptOrdering`, the `RouteLengths` port, `DistanceTable`,
@@ -101,17 +101,24 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
   `Routing\RouteLengthsBetweenSectors`, the adapter of the `RouteLengths` port that measures through
   `FindRouteBetweenSectors`. No controller calls them yet (B6, #9; B7, #10).
 - `app/Infrastructure/FloorPlan/` — `GdFloorPlanDecoder` and `GdFloorPlanImage` (GD).
-- `app/Infrastructure/Storage/` — `FilesystemStoreGridRepository` and `FilesystemRouteCache`, which
-  keep `stores/<id>/grid.json` and `stores/<id>/routes/<from>-<to>.json` on the `local` disk.
+- `app/Infrastructure/Persistence/` — B4 (#7): the Eloquent adapters of the six repository ports
+  (`EloquentProductCatalog`, `EloquentShoppingListRepository`, `EloquentStoreRepository`,
+  `EloquentAssortmentRepository`, `EloquentStoreGridRepository`, `EloquentRouteCache`), and in
+  `Eloquent/` the `*Record` models they map from. Grids and routes are rows (`store_grids`, `routes`),
+  not files. `StoreRepository` only reads: the seeders write stores through
+  `Database\Seeders\StoreWriter` until store creation (B7, #10).
+  [ADR 0005](/docs/adr/0005-persistence.md) has the schema and its constraints.
 - `app/Infrastructure/Persistence/Eloquent/User.php` — the skeleton's user model, moved out of
   `app/Models` so Eloquent stays in Infrastructure. Accounts are redesigned in B5 (#8).
 - `app/Console/` — `ContextSurfaces` and the two `context:*` commands (see
   [tooling.md](tooling.md)).
-- `app/Providers/` — the composition root. `AppServiceProvider` binds the B2 ports
-  (`ColorClassifier`, `FloorPlanDecoder`, `Heuristic`, `Pathfinder`, `StoreGridRepository`,
-  `RouteCache`) to their adapters; `VisitServiceProvider` binds `RouteLengths` and the
-  `VisitOrderingStrategy` (2-opt over nearest neighbour). Two providers keep each within PHPMD's
-  coupling limit.
+- `app/Providers/` — the composition root. `AppServiceProvider` binds the floor-plan and routing
+  ports (`ColorClassifier`, `FloorPlanDecoder`, `Heuristic`, `Pathfinder`);
+  `PersistenceServiceProvider` binds the six repository ports to their Eloquent adapters;
+  `VisitServiceProvider` binds `RouteLengths` and the `VisitOrderingStrategy` (2-opt over nearest
+  neighbour). Separate providers keep each within PHPMD's coupling limit.
+- `database/seeders/` — the demo data: the catalogue, store 1 with its layout, assortment and mapped
+  floor plan, and a demo user with a list.
 - `routes/web.php` — the welcome page; `/up` is Laravel's health route, used by the container's
   health check.
 
@@ -119,6 +126,7 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
 
 - `docker compose up`: the `app` service (FrankenPHP: Caddy and PHP 8.4 in one process, serving
   `public/` on port 8000) and `mysql` (MySQL 8.4). The app's entrypoint installs Composer
-  dependencies on a fresh clone, creates `.env`, generates the key and runs the migrations.
-- Sessions, cache and queue use the database drivers (Laravel's defaults); tests use SQLite in
-  memory and array drivers (`phpunit.xml`).
+  dependencies on a fresh clone, creates `.env`, generates the key and runs the migrations and the
+  seeders (`migrate --seed`, which seeds nothing once store 1 exists).
+- Sessions, cache and queue use the database drivers (Laravel's defaults); tests use the
+  `bway_testing` database on the same MySQL and array drivers (`phpunit.xml`).

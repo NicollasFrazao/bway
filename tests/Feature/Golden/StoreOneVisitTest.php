@@ -6,6 +6,7 @@ use App\Application\Visit\PlanVisit;
 use App\Domain\Catalog\Product;
 use App\Domain\Catalog\ProductId;
 use App\Domain\Catalog\ProductName;
+use App\Domain\Routing\RouteCache;
 use App\Domain\Shared\UserId;
 use App\Domain\ShoppingList\ListItem;
 use App\Domain\ShoppingList\ShoppingList;
@@ -23,8 +24,8 @@ use App\Domain\Visit\RouteLengths;
 use App\Domain\Visit\VisitPlan;
 use App\Domain\Visit\VisitPlanner;
 use App\Domain\Visit\VisitStop;
-use Illuminate\Support\Facades\Storage;
 use Tests\Support\Domain\InMemoryAssortmentRepository;
+use Tests\Support\Domain\InMemoryRouteCache;
 use Tests\Support\Domain\InMemoryShoppingListRepository;
 use Tests\Support\Domain\InMemoryStoreGridRepository;
 use Tests\Support\Domain\InMemoryStoreRepository;
@@ -55,12 +56,12 @@ const STORE_ONE_SAMPLE = [
 const V1_VISIT_ORDER = [3, 6, 5, 10, 11];
 
 /**
- * Wires the use case in the container: store 1 with its PHP-mapped grid, the sample assortment and
- * user 1's sample list; routes go to a faked disk.
+ * Wires the use case in the container: store 1 with its PHP-mapped grid, the sample assortment,
+ * user 1's sample list and the routes, all in memory (the seeded database runs the same visit in
+ * tests/Feature/Database/SeedersTest.php).
  */
 function bindStoreOneVisit(): void
 {
-    Storage::fake('local');
     $grids = new InMemoryStoreGridRepository;
     $grids->save(new StoreId(1), V1StoreOne::mappedByPhp());
     $list = ShoppingList::empty(new UserId(1));
@@ -82,6 +83,7 @@ function bindStoreOneVisit(): void
     app()->instance(StoreGridRepository::class, $grids);
     app()->instance(AssortmentRepository::class, new InMemoryAssortmentRepository(new Assortment(new StoreId(1), ...$sectorProducts)));
     app()->instance(ShoppingListRepository::class, $lists);
+    app()->instance(RouteCache::class, new InMemoryRouteCache);
 }
 
 /**

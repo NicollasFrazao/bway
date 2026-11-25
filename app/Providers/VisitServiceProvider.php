@@ -15,7 +15,6 @@ use Illuminate\Support\ServiceProvider;
  * Composition root of the visit: binds the ports of the visit planner to their implementations.
  *
  * Kept apart from AppServiceProvider so each provider stays within the coupling limit of PHPMD.
- * AssortmentRepository has no production adapter until issue #7.
  */
 final class VisitServiceProvider extends ServiceProvider
 {
