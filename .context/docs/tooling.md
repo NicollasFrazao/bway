@@ -83,7 +83,7 @@ One job per check, so each can be a required status check on its own. PHP jobs u
 | `rector` | `composer analyse:rector` |
 | `deptrac` | `composer check:architecture` |
 | `unused` | `composer check:unused` |
-| `test` | `composer test:coverage`; the coverage report (Clover) is uploaded as an artifact |
+| `test` | `composer test:coverage` against a MySQL 8.4 service (`bway_testing`, `DB_HOST=127.0.0.1`); the coverage report (Clover) is uploaded as an artifact |
 | `audit` | `composer audit` |
 | `context` | `composer check:context` |
 | `eslint` | `npm run lint` |

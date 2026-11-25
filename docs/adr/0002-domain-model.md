@@ -60,9 +60,9 @@ per product.
 
 ## Consequences
 
-- Ports are tested by contract: `tests/Unit/Domain/*/*RepositoryTest.php` and `ProductCatalogTest.php`
-  run against in-memory adapters (`tests/Support/Domain/`); B4 runs the same contract against the
-  Eloquent adapters (`TODO(#7)` in each file).
+- Ports are tested by contract, against the in-memory adapters of `tests/Support/Domain/`. B4 moved
+  the contracts to `tests/Feature/Contracts/`, where each also runs against its Eloquent adapter on
+  MySQL ([ADR 0005](0005-persistence.md)).
 - B4's schema keeps integer keys and the (user, product) shape of the list, with a uniqueness
   constraint mirroring `DuplicateListItem`.
 - A store layout that breaks a rule cannot be loaded at all; B4's seed data and B7's store creation

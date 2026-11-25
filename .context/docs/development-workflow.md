@@ -27,17 +27,25 @@ make install     # Composer and npm dependencies, and the git hooks
 
 `make up` alone is enough to see the welcome page: on a fresh clone the app container's entrypoint
 (`docker/app/entrypoint.sh`) runs `composer install`, copies `.env.example` to `.env`, generates the
-app key and runs the migrations before starting the server.
+app key and runs the migrations and the seeders (`migrate --seed`) before starting the server.
+
+The seed is the demo data: the product catalogue, store 1 with its layout, assortment and mapped
+floor plan, and the user `test@example.com` (password `password`) with a shopping list. It runs on
+every start and does nothing once store 1 exists ("Store 1 exists already; nothing seeded.").
 
 Ports: `APP_PORT` (default 8000) for the app and `FORWARD_DB_PORT` (default 33060) for MySQL
 (user `bway`, password `bway`, database `bway`). Set them in the shell to change them. The image runs
 as the host user (`UID`/`GID`, default 1000), so files it writes in the bind mount stay yours.
 
+The tests use a second database on the same server, `bway_testing`, which MySQL creates when its
+volume is new (`docker/mysql/initdb/`). A volume created before B4 (#7) does not have it: run
+`docker compose down -v` once, then `make up`.
+
 ## Day to day
 
 | Command | What it does |
 | --- | --- |
-| `make up` / `make down` | Start / stop the stack (the database volume is kept; `docker compose down -v` drops it) |
+| `make up` / `make down` | Start / stop the stack (the database volume is kept; `docker compose down -v` drops it, and the next `make up` seeds again) |
 | `make sh` | Shell in the app container (`php artisan ...`, `composer ...`) |
 | `make test` | Pest |
 | `make coverage` | Pest with the 80% coverage gate |

@@ -9,17 +9,18 @@ computed with A* over a mapped floor plan.
 
 ## Status
 
-Phases B0 to B3: a Laravel 13 (PHP 8.4) skeleton on Docker with the full quality gate in CI, and
-the domain — shopping list, stores and their sectors, floor-plan mapping, A* routing and visit
-planning — as plain PHP with its use cases, tested without the framework. Persistence and the
-screens arrive in the next phases.
+Phases B0 to B4: a Laravel 13 (PHP 8.4) skeleton on Docker with the full quality gate in CI; the
+domain — shopping list, stores and their sectors, floor-plan mapping, A* routing and visit
+planning — as plain PHP with its use cases, tested without the framework; and its storage in MySQL
+8.4, seeded on first run with the catalogue, store 1 and a demo user (`test@example.com`, password
+`password`). Accounts and the screens arrive in the next phases.
 
 ## Running locally
 
 Requirements: Docker with Compose v2; Node.js 22 for the git hooks and the JavaScript checks.
 
 ```bash
-make up        # app on http://localhost:8000 and MySQL 8.4; installs dependencies and migrates on first run
+make up        # app on http://localhost:8000 and MySQL 8.4; installs dependencies, migrates and seeds on first run
 make install   # Composer and npm dependencies and the git hooks
 make gate      # every check CI runs
 ```

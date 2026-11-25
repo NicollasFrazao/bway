@@ -1,6 +1,7 @@
 # 0003. Floor-plan mapping and routing: v1's legend, a true A* on walkways, routes cached per pair
 
-- Status: accepted
+- Status: accepted; where grids and routes are kept is superseded by
+  [ADR 0005](0005-persistence.md) (MySQL rows instead of files)
 - Date: 2026-11-05
 - Issue: [#5](https://github.com/NicollasFrazao/bway/issues/5)
 
@@ -69,7 +70,9 @@ Replaying v1 on its own data showed what the port has to keep and what it should
   adapter keeps them as `stores/<id>/routes/<from>-<to>.json` on the local disk, next to the grid
   (`stores/<id>/grid.json`, `StoreGridRepository`). Both are keyed by the store id, which removes
   v1's file mismatch. `MapFloorPlan` saves the new grid and forgets the store's routes, which were
-  found on the old one. A failed search is not cached.
+  found on the old one. A failed search is not cached. *B4 replaced the files with the `store_grids`
+  and `routes` tables ([ADR 0005](0005-persistence.md)); the cache per ordered pair and the
+  forgetting on a new mapping stay.*
 - **A store's layout is checked against its grid.** `Store` refuses at construction two sectors or
   partitions that share a cell (`OverlappingLayout`), and `MapFloorPlan` refuses a plan whose grid
   does not hold every sector and partition (`LayoutOutsideGrid`). These were left open by
@@ -88,7 +91,8 @@ Replaying v1 on its own data showed what the port has to keep and what it should
   store that the router has to undo is a bug, not behaviour.
 - **The route cache in Laravel's cache store.** The database cache driver has no tags, so forgetting
   one store's routes on a new mapping would need a version key in every entry; files per store make
-  it one directory delete. B4 may move both grid and routes to MySQL.
+  it one directory delete. B4 may move both grid and routes to MySQL (it did:
+  [ADR 0005](0005-persistence.md)).
 
 ## Consequences
 
