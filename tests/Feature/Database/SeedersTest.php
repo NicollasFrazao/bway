@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Application\Visit\PlanVisit;
+use App\Domain\Account\AccountRepository;
+use App\Domain\Account\EmailAddress;
 use App\Domain\Catalog\Product;
 use App\Domain\Catalog\ProductCatalog;
 use App\Domain\Catalog\ProductId;
@@ -21,6 +23,7 @@ use App\Infrastructure\Persistence\Eloquent\ProductRecord;
 use App\Infrastructure\Persistence\Eloquent\RouteRecord;
 use App\Infrastructure\Persistence\Eloquent\SectorProductRecord;
 use App\Infrastructure\Persistence\Eloquent\User;
+use Database\Seeders\DemoAdministratorSeeder;
 use Database\Seeders\DemoShopperSeeder;
 use Database\Seeders\ProductCatalogSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -129,6 +132,17 @@ it('seeds a demo user who plans, shops and plans again the visit of store 1', fu
         ->and(array_map(static fn (ListItem $item): string => $item->productName->value, $first->unsold))->toBe(['Batteries'])
         ->and(array_column(demoStops($second), 0))->toBe([5, 6, 10, 11])
         ->and(RouteRecord::query()->count())->toBe(25);
+});
+
+it('seeds a demo administrator who may manage the stores, and the demo user may not', function (): void {
+    seed();
+    $accounts = app(AccountRepository::class);
+
+    $administrator = $accounts->findByEmail(EmailAddress::from(DemoAdministratorSeeder::EMAIL));
+    $shopper = $accounts->findByEmail(EmailAddress::from(DemoShopperSeeder::EMAIL));
+
+    expect($administrator?->canManageStores())->toBeTrue()
+        ->and($shopper?->canManageStores())->toBeFalse();
 });
 
 it('seeds once: running the seeders again changes nothing', function (): void {

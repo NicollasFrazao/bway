@@ -53,21 +53,22 @@ Checked by `composer check:architecture` (Deptrac, `deptrac.yaml`, run with `--f
 | Use case and its input/output DTOs | `app/Application/<Context>/` | `AddProductToList`, `PlanVisit` |
 | Application-side adapter of a domain port | `app/Application/<Context>/` | `RouteLengthsBetweenSectors`, behind `RouteLengths` |
 | Repository implementation (Eloquent adapter of a port) | `app/Infrastructure/Persistence/` | `EloquentShoppingListRepository` |
-| Eloquent model, named `*Record` (the skeleton's `User` aside, until B5) | `app/Infrastructure/Persistence/Eloquent/` | `StoreRecord`, `SectorRecord` |
+| Eloquent model, named `*Record` (the framework's `User` aside: the guard and the password broker read it) | `app/Infrastructure/Persistence/Eloquent/` | `StoreRecord`, `SectorRecord` |
 | Floor-plan image decoder | `app/Infrastructure/FloorPlan/` | `GdFloorPlanDecoder`, behind the `FloorPlanDecoder` port |
-| Controller, form request, resource | `app/Http/` | `ShoppingListController` |
-| Binding of an interface to its implementation | `app/Providers/` (`AppServiceProvider`, `PersistenceServiceProvider`, `VisitServiceProvider`) | |
+| Controller, form request, resource | `app/Http/` | `ShoppingListController`, `SessionController` |
+| Binding of an interface to its implementation | `app/Providers/` (`AccountServiceProvider`, `AppServiceProvider`, `PersistenceServiceProvider`, `VisitServiceProvider`) | |
 
 `<Context>` is a folder per part of the domain, created when its first class arrives: `Shared`
-(identifiers, `Name`, the `DomainError` base), `Catalog`, `ShoppingList`, `Store`, `Grid`,
+(identifiers, `Name`, the `DomainError` base), `Account`, `Catalog`, `ShoppingList`, `Store`, `Grid`,
 `FloorPlan`, `Routing` and `Visit`. A context may use `Shared` and the contexts it builds on
 (`ShoppingList` uses `Catalog`; `Store` uses `Grid` and, for its assortment, `Catalog`; `FloorPlan`
 uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `Store` and `Routing`);
-`Grid` uses only `Shared`. The choices behind the model are in
+`Grid` and `Account` use only `Shared`. The choices behind the model are in
 [ADR 0002](/docs/adr/0002-domain-model.md), for mapping and routing in
 [ADR 0003](/docs/adr/0003-floor-plan-mapping-and-routing.md), for the visit in
-[ADR 0004](/docs/adr/0004-visit-planning.md), and for persistence in
-[ADR 0005](/docs/adr/0005-persistence.md).
+[ADR 0004](/docs/adr/0004-visit-planning.md), for persistence in
+[ADR 0005](/docs/adr/0005-persistence.md), and for accounts in
+[ADR 0006](/docs/adr/0006-accounts-and-authorisation.md).
 
 ### Design rules inside the layers
 
@@ -99,7 +100,11 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
   grid, forget the store's routes) and `Routing\FindRouteBetweenSectors` (centre to centre, cached
   per ordered pair); and of B3: `Visit\PlanVisit` (the visit of a store for a user's list) and
   `Routing\RouteLengthsBetweenSectors`, the adapter of the `RouteLengths` port that measures through
-  `FindRouteBetweenSectors`. No controller calls them yet (B6, #9; B7, #10).
+  `FindRouteBetweenSectors`. B6 (#9) added `Visit\MapVisit` (the visit with each walk kept to its
+  corners, for the map) and `ShoppingList\AcquireItem`; the visit pages call them. B5 (#8) added
+  `Account\RegisterAccount`, `SignIn`, `ResetPassword` and `AuthoriseStoreManagement`;
+  `ShoppingList\ShowShoppingList`, `AddProductToList`, `RemoveProductFromList`, `ClearShoppingList`
+  and `SearchProducts`; and `Store\ListStores`.
 - `app/Infrastructure/FloorPlan/` — `GdFloorPlanDecoder` and `GdFloorPlanImage` (GD).
 - `app/Infrastructure/Persistence/` — B4 (#7): the Eloquent adapters of the six repository ports
   (`EloquentProductCatalog`, `EloquentShoppingListRepository`, `EloquentStoreRepository`,
@@ -108,19 +113,30 @@ uses `Grid`; `Routing` uses `Grid` and `Store`; `Visit` uses `ShoppingList`, `St
   not files. `StoreRepository` only reads: the seeders write stores through
   `Database\Seeders\StoreWriter` until store creation (B7, #10).
   [ADR 0005](/docs/adr/0005-persistence.md) has the schema and its constraints.
-- `app/Infrastructure/Persistence/Eloquent/User.php` — the skeleton's user model, moved out of
-  `app/Models` so Eloquent stays in Infrastructure. Accounts are redesigned in B5 (#8).
+- `app/Domain/Account/` — B5 (#8): `Account` (`UserId`, `Name`, `Credentials`, `Role`), the values a
+  person types (`EmailAddress`, `PlainPassword`, `HashedPassword`), the `AccountRepository` and
+  `PasswordHasher` ports, and their errors.
+- `app/Infrastructure/Persistence/Eloquent/User.php` — the framework's user model, moved out of
+  `app/Models` so Eloquent stays in Infrastructure; `EloquentAccountRepository` (with `AccountRows`)
+  maps it to the domain's account, and `Infrastructure/Account/FrameworkPasswordHasher` hashes with
+  bcrypt.
+- `app/Http/` — B5 (#8): sign-up, sign-in and out, password recovery (`Controllers/Account/`), the
+  signed-in user's own list (`ShoppingListController`, `ShoppingListItemController`, the owner from
+  `SignedInUser`), and the store list for administrators (`Controllers/Admin/StoreController`); one
+  form request per form.
 - `app/Console/` — `ContextSurfaces` and the two `context:*` commands (see
   [tooling.md](tooling.md)).
-- `app/Providers/` — the composition root. `AppServiceProvider` binds the floor-plan and routing
+- `app/Providers/` — the composition root. `AccountServiceProvider` binds the account ports and
+  defines the `manage-stores` gate; `AppServiceProvider` binds the floor-plan and routing
   ports (`ColorClassifier`, `FloorPlanDecoder`, `Heuristic`, `Pathfinder`);
   `PersistenceServiceProvider` binds the six repository ports to their Eloquent adapters;
   `VisitServiceProvider` binds `RouteLengths` and the `VisitOrderingStrategy` (2-opt over nearest
   neighbour). Separate providers keep each within PHPMD's coupling limit.
 - `database/seeders/` — the demo data: the catalogue, store 1 with its layout, assortment and mapped
-  floor plan, and a demo user with a list.
-- `routes/web.php` — the welcome page; `/up` is Laravel's health route, used by the container's
-  health check.
+  floor plan, a demo user with a list and a demo administrator.
+- `routes/web.php` — the home page; the guest pages (sign-up, sign-in, recovery); the list, store
+  choice, visit and map routes behind `auth`, none of which takes a user id; `admin/` behind
+  `can:manage-stores`. `/up` is Laravel's health route, used by the container's health check.
 
 ## Runtime
 
