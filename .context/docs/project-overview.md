@@ -62,15 +62,19 @@ Order: B0 → B0.1 → B1 → B2 → B3 → B4 → (B5, B6, B7) → B8.
 
 ## Current state
 
-B0 to B4: the skeleton serves Laravel's welcome page and every check of the quality gate runs in
+B0 to B7: the app serves its pages from Docker and every check of the quality gate runs in
 CI. `app/Domain` holds the domain model (shopping list, catalogue, stores with their sectors,
 partitions and assortment, grids), the floor-plan mapping and the A* routing (B2), and the visit
 planner (B3: the list grouped by sector, unsold items reported, the sectors ordered from the
 entrance by nearest neighbour improved by 2-opt, on real route lengths), unit-tested without
 Laravel and golden-tested against v1's store 1. B4 stores it all in MySQL through Eloquent adapters
 of the domain ports, and seeds a fresh clone with the catalogue, store 1 (v1's layout and floor plan,
-which v1 never seeded) and a demo user with a list. No route uses the use cases yet: that starts with
-B5 and B6.
+which v1 never seeded), a demo user with a list and a demo administrator. B5 adds accounts:
+sign-up, sign-in with a rate limit, password recovery, a user's own list (no route names a user), and
+store management behind an administrators-only gate. B6 adds the pages: choose a store, follow the
+visit sector by sector and tick items off, and see the route drawn on the store's layout. B7 adds
+store management: create a store from its floor plan, lay out its sectors and partitions, place
+the products, and find its routes on a queue, with the sectors no walkway reaches listed.
 
 ## Out of scope
 

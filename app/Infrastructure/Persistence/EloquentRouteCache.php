@@ -10,6 +10,7 @@ use App\Domain\Routing\RouteCache;
 use App\Domain\Store\SectorId;
 use App\Domain\Store\StoreId;
 use App\Infrastructure\Persistence\Eloquent\RouteRecord;
+use App\Infrastructure\Persistence\Eloquent\UnreachableRouteRecord;
 use UnexpectedValueException;
 
 /**
@@ -62,14 +63,61 @@ final readonly class EloquentRouteCache implements RouteCache
             self::KEY,
             ['cells'],
         );
+        UnreachableRouteRecord::query()->where($this->key($storeId, $from, $to))->delete();
     }
 
     /**
-     * Deletes the store's routes.
+     * Writes that the pair has no route and deletes a route kept for it.
+     */
+    public function rememberUnreachable(StoreId $storeId, SectorId $from, SectorId $to): void
+    {
+        UnreachableRouteRecord::query()->upsert([$this->key($storeId, $from, $to)], self::KEY, self::KEY);
+        RouteRecord::query()->where($this->key($storeId, $from, $to))->delete();
+    }
+
+    /**
+     * Tells whether a row says the pair has no route.
+     */
+    public function isUnreachable(StoreId $storeId, SectorId $from, SectorId $to): bool
+    {
+        return UnreachableRouteRecord::query()->where($this->key($storeId, $from, $to))->exists();
+    }
+
+    /**
+     * Counts the store's route rows.
+     */
+    public function countFound(StoreId $storeId): int
+    {
+        return RouteRecord::query()->where('store_id', $storeId->value)->count();
+    }
+
+    /**
+     * The store's pairs without a route, in the order they were found.
+     *
+     * @return list<array{SectorId, SectorId}>
+     */
+    public function unreachable(StoreId $storeId): array
+    {
+        return array_values(
+            UnreachableRouteRecord::query()
+                ->where('store_id', $storeId->value)
+                ->orderBy('id')
+                ->get()
+                ->map(static fn (UnreachableRouteRecord $record): array => [
+                    new SectorId($record->from_sector_id),
+                    new SectorId($record->to_sector_id),
+                ])
+                ->all(),
+        );
+    }
+
+    /**
+     * Deletes the store's routes and its pairs without one.
      */
     public function forgetStore(StoreId $storeId): void
     {
         RouteRecord::query()->where('store_id', $storeId->value)->delete();
+        UnreachableRouteRecord::query()->where('store_id', $storeId->value)->delete();
     }
 
     /**

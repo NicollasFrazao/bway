@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Domain\Account\Role;
 use App\Infrastructure\Persistence\Eloquent\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * Builds verified users with fake names and e-mails and the password `password`.
+ * Builds verified shoppers with fake names and e-mails and the password `password`.
  *
  * @extends Factory<User>
  */
@@ -35,6 +36,15 @@ final class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => self::$passwordHash ??= Hash::make('password'),
             'remember_token' => Str::random(self::REMEMBER_TOKEN_LENGTH),
+            'role' => Role::Shopper->value,
         ];
+    }
+
+    /**
+     * A user who may manage the stores.
+     */
+    public function administrator(): self
+    {
+        return $this->state(['role' => Role::Administrator->value]);
     }
 }

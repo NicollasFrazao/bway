@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Store;
 
-use App\Domain\Shared\DomainError;
-
 /**
  * A store was assembled with two partitions that share an id.
  */
-final class DuplicatePartition extends DomainError
+final class DuplicatePartition extends LayoutRefused
 {
     /**
      * Builds the error for the repeated partition.

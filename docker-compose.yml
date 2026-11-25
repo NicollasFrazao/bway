@@ -1,4 +1,4 @@
-# Local development: the app (FrankenPHP serving public/ on PHP 8.4) and MySQL 8.4.
+# Local development: the app (FrankenPHP serving public/ on PHP 8.4), a queue worker and MySQL 8.4.
 # `docker compose up` on a fresh clone installs the dependencies, creates .env,
 # runs the migrations, seeds the demo data and serves http://localhost:8000.
 services:
@@ -27,6 +27,27 @@ services:
             timeout: 3s
             retries: 30
             start_period: 120s
+
+    # Runs the queued jobs (finding a store's routes, B7). It starts once the app is healthy, so the
+    # app's entrypoint has installed the dependencies and migrated the database.
+    queue:
+        build:
+            context: .
+            dockerfile: docker/app/Dockerfile
+            args:
+                UID: ${UID:-1000}
+                GID: ${GID:-1000}
+        image: bway-app:dev
+        command: ["php", "artisan", "queue:work", "--tries=1", "--timeout=600"]
+        volumes:
+            - .:/app
+        depends_on:
+            app:
+                condition: service_healthy
+        restart: unless-stopped
+        # The image's health check asks the web server, which this container does not run.
+        healthcheck:
+            disable: true
 
     mysql:
         image: mysql:8.4

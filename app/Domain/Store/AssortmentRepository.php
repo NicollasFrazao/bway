@@ -13,4 +13,9 @@ interface AssortmentRepository
      * Loads what a store sells and where; a store with nothing recorded gets an empty assortment.
      */
     public function forStore(StoreId $storeId): Assortment;
+
+    /**
+     * Replaces what the store sells, and where, with the assortment.
+     */
+    public function save(Assortment $assortment): void;
 }

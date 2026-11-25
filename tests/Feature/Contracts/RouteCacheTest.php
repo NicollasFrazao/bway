@@ -65,3 +65,39 @@ it('forgets every route of one store and only of that store', function (RouteCac
         ->and($routes->find(new StoreId(1), new SectorId(3), new SectorId(2)))->toBeNull()
         ->and($routes->find(new StoreId(2), new SectorId(4), new SectorId(5)))->not->toBeNull();
 })->with('route caches');
+
+it('keeps the pairs without a route, apart from the routes and per store', function (RouteCache $routes): void {
+    $routes->remember(new StoreId(1), new SectorId(2), new SectorId(3), Routes::through([1, 1], [2, 1]));
+    $routes->rememberUnreachable(new StoreId(1), new SectorId(3), new SectorId(2));
+    $routes->rememberUnreachable(new StoreId(2), new SectorId(4), new SectorId(5));
+
+    expect($routes->isUnreachable(new StoreId(1), new SectorId(3), new SectorId(2)))->toBeTrue()
+        ->and($routes->isUnreachable(new StoreId(1), new SectorId(2), new SectorId(3)))->toBeFalse()
+        ->and($routes->unreachable(new StoreId(1)))->toEqual([[new SectorId(3), new SectorId(2)]])
+        ->and($routes->countFound(new StoreId(1)))->toBe(1)
+        ->and($routes->countFound(new StoreId(2)))->toBe(0);
+})->with('route caches');
+
+it('replaces a pair without a route by its route, and the other way round', function (RouteCache $routes): void {
+    $route = Routes::through([1, 1], [2, 1]);
+    $routes->rememberUnreachable(new StoreId(1), new SectorId(2), new SectorId(3));
+    $routes->remember(new StoreId(1), new SectorId(2), new SectorId(3), $route);
+
+    expect($routes->isUnreachable(new StoreId(1), new SectorId(2), new SectorId(3)))->toBeFalse()
+        ->and($routes->find(new StoreId(1), new SectorId(2), new SectorId(3)))->toEqual($route);
+
+    $routes->rememberUnreachable(new StoreId(1), new SectorId(2), new SectorId(3));
+
+    expect($routes->find(new StoreId(1), new SectorId(2), new SectorId(3)))->toBeNull()
+        ->and($routes->countFound(new StoreId(1)))->toBe(0);
+})->with('route caches');
+
+it('forgets the pairs without a route with the routes', function (RouteCache $routes): void {
+    $routes->rememberUnreachable(new StoreId(1), new SectorId(2), new SectorId(3));
+    $routes->rememberUnreachable(new StoreId(2), new SectorId(4), new SectorId(5));
+
+    $routes->forgetStore(new StoreId(1));
+
+    expect($routes->unreachable(new StoreId(1)))->toBe([])
+        ->and($routes->unreachable(new StoreId(2)))->toHaveCount(1);
+})->with('route caches');

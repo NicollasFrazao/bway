@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence;
 
 use App\Domain\Grid\GridArea;
-use App\Domain\Grid\GridCoordinate;
 use App\Domain\Shared\Name;
-use App\Domain\Store\Partition;
 use App\Domain\Store\PartitionId;
-use App\Domain\Store\Sector;
 use App\Domain\Store\SectorId;
 use App\Domain\Store\Store;
 use App\Domain\Store\StoreId;
@@ -18,10 +15,11 @@ use App\Domain\Store\StoreRepository;
 use App\Infrastructure\Persistence\Eloquent\PartitionRecord;
 use App\Infrastructure\Persistence\Eloquent\SectorRecord;
 use App\Infrastructure\Persistence\Eloquent\StoreRecord;
+use Illuminate\Database\ConnectionInterface;
 
 /**
  * Stores kept in `stores`, with their layout in `sectors` and `partitions`; each is rebuilt as a
- * Store aggregate, which checks the layout again on the way out.
+ * Store aggregate, which checks the layout again on the way out (the mapping is StoreRows').
  */
 final readonly class EloquentStoreRepository implements StoreRepository
 {
@@ -29,6 +27,11 @@ final readonly class EloquentStoreRepository implements StoreRepository
      * The relations loaded with every store.
      */
     private const array LAYOUT = ['sectors', 'partitions'];
+
+    /**
+     * Takes the connection whose transactions make a write all or nothing.
+     */
+    public function __construct(private ConnectionInterface $connection) {}
 
     /**
      * Loads one store with its sectors and partitions, each in the order of their ids.
@@ -39,7 +42,7 @@ final readonly class EloquentStoreRepository implements StoreRepository
     {
         $record = StoreRecord::query()->with(self::LAYOUT)->find($id->value) ?? throw StoreNotFound::withId($id);
 
-        return $this->store($record);
+        return StoreRows::toStore($record);
     }
 
     /**
@@ -50,44 +53,50 @@ final readonly class EloquentStoreRepository implements StoreRepository
     public function all(): array
     {
         return array_values(
-            StoreRecord::query()->with(self::LAYOUT)->orderBy('id')->get()->map($this->store(...))->all(),
+            StoreRecord::query()->with(self::LAYOUT)->orderBy('id')->get()->map(StoreRows::toStore(...))->all(),
         );
     }
 
     /**
-     * The aggregate a row and its layout stand for.
+     * Writes the store row and its entrance in one transaction, then loads the aggregate.
      */
-    private function store(StoreRecord $record): Store
+    public function add(Name $name, GridArea $entrance): Store
     {
-        return new Store(
-            new StoreId($record->id),
-            Name::from($record->name),
-            array_values($record->sectors->map($this->sector(...))->all()),
-            array_values($record->partitions->map($this->partition(...))->all()),
-        );
+        $id = $this->connection->transaction(static fn (): int => StoreRows::insert($name, $entrance));
+
+        return $this->get(new StoreId($id));
     }
 
     /**
-     * The sector a row stands for.
+     * Rewrites the store's name and layout in one transaction.
+     *
+     * @throws StoreNotFound when no row has the store's id.
      */
-    private function sector(SectorRecord $record): Sector
+    public function save(Store $store): void
     {
-        return new Sector(
-            new SectorId($record->id),
-            Name::from($record->name),
-            new GridArea(new GridCoordinate($record->x, $record->y), $record->width, $record->height),
-            $record->kind,
-        );
+        $this->connection->transaction(static function () use ($store): void {
+            $record = StoreRecord::query()->lockForUpdate()->find($store->id->value) ?? throw StoreNotFound::withId($store->id);
+            StoreRows::rewrite($record, $store);
+        });
     }
 
     /**
-     * The partition a row stands for.
+     * One more than the largest sector id.
      */
-    private function partition(PartitionRecord $record): Partition
+    public function nextSectorId(): SectorId
     {
-        return new Partition(
-            new PartitionId($record->id),
-            new GridArea(new GridCoordinate($record->x, $record->y), $record->width, $record->height),
-        );
+        $largest = SectorRecord::query()->max('id');
+
+        return new SectorId((is_numeric($largest) ? (int) $largest : 0) + 1);
+    }
+
+    /**
+     * One more than the largest partition id.
+     */
+    public function nextPartitionId(): PartitionId
+    {
+        $largest = PartitionRecord::query()->max('id');
+
+        return new PartitionId((is_numeric($largest) ? (int) $largest : 0) + 1);
     }
 }

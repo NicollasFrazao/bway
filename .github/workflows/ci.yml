@@ -176,7 +176,7 @@ jobs:
         # The image runs as the host user so it can write vendor/ in the bind mount.
         run: env UID="$(id -u)" GID="$(id -g)" docker compose up --detach --build --wait --wait-timeout 600
       - name: The welcome page answers
-        run: curl --fail --silent --show-error http://localhost:8000/ | grep --quiet '<title>bway'
+        run: curl --fail --silent --show-error http://localhost:8000/ | grep --quiet '· bway</title>'
       - name: Logs
         if: failure()
         run: docker compose logs

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\FloorPlan\MapFloorPlan;
+use App\Application\FloorPlan\StoreGridWriter;
 use App\Domain\FloorPlan\FloorPlanMapper;
 use App\Domain\FloorPlan\LegendColorClassifier;
 use App\Domain\Grid\Grid;
@@ -14,6 +15,7 @@ use App\Domain\Store\SectorId;
 use App\Domain\Store\StoreId;
 use App\Domain\Store\StoreNotFound;
 use Tests\Support\CornerShop;
+use Tests\Support\Domain\ImmediateTransaction;
 use Tests\Support\Domain\InMemoryRouteCache;
 use Tests\Support\Domain\InMemoryStoreGridRepository;
 use Tests\Support\Domain\InMemoryStoreRepository;
@@ -32,8 +34,7 @@ function floorPlanMapping(): array
     $mapping = new MapFloorPlan(
         new InMemoryStoreRepository(CornerShop::store()),
         new FloorPlanMapper(new LegendColorClassifier, new TextFloorPlanDecoder),
-        $grids,
-        $routes,
+        new StoreGridWriter($grids, $routes, new ImmediateTransaction),
     );
 
     return [$mapping, $grids, $routes];

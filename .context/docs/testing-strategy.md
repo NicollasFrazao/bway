@@ -102,17 +102,21 @@ binding of 2-opt over nearest neighbour, gives 3, 5, 6, 10, 11 (1,193 steps), th
 | B2 routing | Golden tests against the mapping and routes of store 1 committed in `v1` (see above); unreachable target, start equals target, walls and partitions block movement; the contracts of `StoreGridRepository` and `RouteCache` against their in-memory and filesystem adapters |
 | B3 visit | Deterministic order on small hand-made grids (`tests/Support/AisleShop.php`, where nearest neighbour is not the shortest) and hand-made distance tables; products not sold in the store are reported; the golden visit of store 1 (see above); the contract of `AssortmentRepository` |
 | B4 persistence | Each repository against MySQL, by contract (`tests/Feature/Contracts/`); every constraint that repeats a domain rule refuses its row and the cascades delete a store's data (`tests/Feature/Database/SchemaTest.php`); the seed is idempotent and the demo user plans, shops and plans again the visit of store 1 (`SeedersTest.php`) |
-| B5 accounts | Access to another user's list is denied; rate limiting; CSRF |
-| B6, B7 | Feature tests of the main flows and of the admin flow and its queued job |
+| B5 accounts | Every account rule in unit tests on in-memory adapters (`InMemoryAccountRepository`, `PrefixHasher`); the contract of `AccountRepository`; sign-up, sign-in (the same answer for a wrong password and an unknown email, five failures a minute), sign-out and password reset end to end (`tests/Feature/Accounts/`); other users' ids sent every way v1 accepted them change only the session's list, v1's URLs answer 404, and a form without its token gets 419 (`tests/Feature/ShoppingList/OwnListTest.php`); store management forbidden to a shopper (`tests/Feature/Admin/`) |
+| B6 web interface | The main flow on the seeded store 1 (`tests/Feature/Visit/`): the store choice, the visit in walking order with the unsold item, ticking an item off and the plan without it, the map with one walk highlighted and one polyline per walk, a store not mapped, ids that are not positive; `MapVisit` on drawn shops, a bending walk kept to its corners |
+| B7 store management | The admin flow over HTTP with real PNG plans (`tests/Support/PngFloorPlan.php`, `tests/Feature/Admin/StoreLayoutTest.php`): a store created from its plan, every refused plan and entrance writing nothing, sectors and partitions added, moved and removed, an overlap and the entrance's removal refused, the assortment, the queued route generation with the unreachable sectors listed, a new plan forgetting the routes; the use cases on in-memory adapters (`tests/Support/StoreKit.php`); the repository contracts for `add`, `save`, `next*Id`, the assortment's `save` and the cache's unreachable pairs |
 
 ## Today
 
-425 tests (datasets counted one per case): the welcome page and the health route, the `context:*`
-commands and their classes, the user model (password hashing, hidden attributes), the domain in
+524 tests (datasets counted one per case): the welcome page and the health route, the `context:*`
+commands and their classes, the user model (password hashing, hidden attributes), the accounts and
+the list and store pages of B5 (sign-up, sign-in, rate limits, password reset, a user's own list,
+the `manage-stores` gate, CSRF), the domain in
 `tests/Unit/Domain/` — every invariant of the shopping list and the store (layout overlap and fit,
 the assortment included), the value objects, the legend, the mapper, the A* search on drawn grids,
 the visit planner and both ordering strategies, every domain exception — the B2 and B3 use cases in
-`tests/Unit/Application/`, the GD decoder, the contracts of the six repository ports against their
+`tests/Unit/Application/`, the GD decoder, the contracts of the seven repository ports against their
 in-memory and Eloquent adapters, the adapters' own cases, the schema constraints, the seeders, the
-composition root, and the golden tests of store 1 (mapping, routes and visit). They cover 100% of the
-lines of `app/`.
+composition root, and the golden tests of store 1 (mapping, routes and visit). They cover 99.8% of the
+lines of `app/`; the line left is the guard against a password broker that hands over a user without
+an integer id.

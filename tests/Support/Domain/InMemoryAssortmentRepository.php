@@ -11,7 +11,7 @@ use App\Domain\Store\StoreId;
 /**
  * Serves a fixed set of assortments from memory.
  */
-final readonly class InMemoryAssortmentRepository implements AssortmentRepository
+final class InMemoryAssortmentRepository implements AssortmentRepository
 {
     /**
      * The assortments, keyed by store id.
@@ -40,5 +40,13 @@ final readonly class InMemoryAssortmentRepository implements AssortmentRepositor
     public function forStore(StoreId $storeId): Assortment
     {
         return $this->assortments[$storeId->value] ?? new Assortment($storeId);
+    }
+
+    /**
+     * Replaces the store's assortment.
+     */
+    public function save(Assortment $assortment): void
+    {
+        $this->assortments[$assortment->storeId->value] = $assortment;
     }
 }

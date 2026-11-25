@@ -30,7 +30,8 @@ make install     # Composer and npm dependencies, and the git hooks
 app key and runs the migrations and the seeders (`migrate --seed`) before starting the server.
 
 The seed is the demo data: the product catalogue, store 1 with its layout, assortment and mapped
-floor plan, and the user `test@example.com` (password `password`) with a shopping list. It runs on
+floor plan, the user `test@example.com` (password `password`) with a shopping list, and the
+administrator `admin@example.com` (password `password`), who may open `/admin/stores`. It runs on
 every start and does nothing once store 1 exists ("Store 1 exists already; nothing seeded.").
 
 Ports: `APP_PORT` (default 8000) for the app and `FORWARD_DB_PORT` (default 33060) for MySQL
@@ -40,6 +41,9 @@ as the host user (`UID`/`GID`, default 1000), so files it writes in the bind mou
 The tests use a second database on the same server, `bway_testing`, which MySQL creates when its
 volume is new (`docker/mysql/initdb/`). A volume created before B4 (#7) does not have it: run
 `docker compose down -v` once, then `make up`.
+
+A third service, `queue`, runs `php artisan queue:work`: it finds a store's routes when store
+management asks for them (B7). It starts once the app is healthy.
 
 ## Day to day
 

@@ -11,12 +11,18 @@ use App\Domain\Store\SectorId;
 use App\Domain\Store\SectorProduct;
 use App\Domain\Store\StoreId;
 use App\Infrastructure\Persistence\Eloquent\SectorProductRecord;
+use Illuminate\Database\ConnectionInterface;
 
 /**
  * The assortment of each store, kept in `sector_products`.
  */
 final readonly class EloquentAssortmentRepository implements AssortmentRepository
 {
+    /**
+     * Takes the connection whose transaction makes a save all or nothing.
+     */
+    public function __construct(private ConnectionInterface $connection) {}
+
     /**
      * Loads what the store sells and where; no row for the store is an empty assortment.
      */
@@ -33,5 +39,23 @@ final readonly class EloquentAssortmentRepository implements AssortmentRepositor
             ->all();
 
         return new Assortment($storeId, ...$sectorProducts);
+    }
+
+    /**
+     * Replaces the store's rows with the assortment's, in one transaction.
+     */
+    public function save(Assortment $assortment): void
+    {
+        $this->connection->transaction(static function () use ($assortment): void {
+            SectorProductRecord::query()->where('store_id', $assortment->storeId->value)->delete();
+            SectorProductRecord::query()->insert(array_map(
+                static fn (SectorProduct $sectorProduct): array => [
+                    'store_id' => $assortment->storeId->value,
+                    'sector_id' => $sectorProduct->sectorId->value,
+                    'product_id' => $sectorProduct->productId->value,
+                ],
+                $assortment->sectorProducts(),
+            ));
+        });
     }
 }

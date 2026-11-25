@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Store;
 
 use App\Domain\Catalog\ProductId;
+use LogicException;
 
 /**
  * Which products each sector of a store sells: a product is sold in at most one sector of a store.
@@ -47,10 +48,45 @@ final readonly class Assortment
     }
 
     /**
+     * The assortment of the placements, where a later placement of a product replaces an earlier one,
+     * so no product is ever in several sectors.
+     */
+    public static function ofPlacements(StoreId $storeId, SectorProduct ...$placements): self
+    {
+        $byProduct = [];
+
+        foreach ($placements as $placement) {
+            $byProduct[$placement->productId->value] = $placement;
+        }
+
+        try {
+            return new self($storeId, ...array_values($byProduct));
+        } catch (ProductInSeveralSectors $impossible) {
+            throw new LogicException($impossible->getMessage(), 0, $impossible);
+        }
+    }
+
+    /**
      * The sector the product is sold in, or null when the store does not sell it.
      */
     public function sectorSelling(ProductId $productId): ?SectorId
     {
         return $this->sectors[$productId->value] ?? null;
+    }
+
+    /**
+     * Every product the store sells with its sector, by product id.
+     *
+     * @return list<SectorProduct>
+     */
+    public function sectorProducts(): array
+    {
+        $sectorProducts = [];
+
+        foreach ($this->sectors as $productId => $sectorId) {
+            $sectorProducts[] = new SectorProduct($sectorId, new ProductId($productId));
+        }
+
+        return $sectorProducts;
     }
 }
